@@ -16,7 +16,7 @@ const App = () => {
       {/* Main Content */}
       <Container fluid style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Row>
-          <Col md={8}>
+          <Col md={6}>
             {/* Left Side (Other content can go here) */}
             <h3>Add or Remove Stores</h3>
             <div className="d-flex align-items-center flex-column">
@@ -29,7 +29,7 @@ const App = () => {
             </div>
           </Col>
           
-          <Col md={4}>
+          <Col md={6}>
             {/* Right Side Image Placeholder */}
             <h3>Map Placeholder</h3>
             <MyMapComponent/>
