@@ -1,35 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import { Container, Row, Col, Placeholder, Button } from 'react-bootstrap';
+import TopBar from './components/TopBar';
+import AddStoreButton from './components/AddStoreButton';
+import RemoveStoreButton from './components/RemoveStoreButton';
 
-function App() {
-  const [count, setCount] = useState(0)
-
+const App = () => {
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div>
+      {/* Top Bar */}
+      <TopBar />
 
-export default App
+      {/* Main Content */}
+      <Container fluid className="mt-3">
+        <Row>
+          <Col md={8}>
+            {/* Left Side (Other content can go here) */}
+            <h3>Add or Remove Stores</h3>
+            <div className="d-flex align-items-center flex-column">
+            <br/>
+            <AddStoreButton/>
+            <br/>
+            <RemoveStoreButton/>
+            <br/>
+            <Button variant="primary" className="mx-2">Step</Button>
+            </div>
+          </Col>
+          
+          <Col md={4}>
+            {/* Right Side Image Placeholder */}
+            <h3>Map Placeholder</h3>
+            <Placeholder as="div" className="w-100 h-100">
+              <Placeholder xs={12} className="h-100" />
+            </Placeholder>
+          </Col>
+        </Row>
+      </Container>
+    </div>
+  );
+};
+
+export default App;
