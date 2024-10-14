@@ -60,42 +60,6 @@ const RemoveStoreModal = ({ show, handleClose }) => {
             />
           </Form.Group>
 
-          {/* Category Field */}
-          <Form.Group className="mb-3">
-            <Form.Label>Category</Form.Label>
-            <Form.Control 
-              type="text" 
-              placeholder="Enter category" 
-              name="category" 
-              value={formData.category} 
-              onChange={handleChange} 
-            />
-          </Form.Group>
-
-          {/* Latitude */}
-          <Form.Group className="mb-3">
-            <Form.Label>Latitude</Form.Label>
-            <Form.Control 
-              type="number" 
-              placeholder="Enter latitude" 
-              name="latitude" 
-              value={formData.latitude} 
-              onChange={handleChange} 
-            />
-          </Form.Group>
-
-          {/* Longitude */}
-          <Form.Group className="mb-3">
-            <Form.Label>Longitude</Form.Label>
-            <Form.Control 
-              type="number" 
-              placeholder="Enter longitude" 
-              name="longitude" 
-              value={formData.longitude} 
-              onChange={handleChange} 
-            />
-          </Form.Group>
-
           <Button variant="primary" type="submit">
             Submit
           </Button>
