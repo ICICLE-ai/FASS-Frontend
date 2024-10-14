@@ -3,6 +3,9 @@ import { Container, Row, Col, Placeholder, Button } from 'react-bootstrap';
 import TopBar from './components/TopBar';
 import AddStoreButton from './components/AddStoreButton';
 import RemoveStoreButton from './components/RemoveStoreButton';
+import 'leaflet/dist/leaflet.css';
+import { MapContainer, TileLayer, useMap } from 'react-leaflet'
+import MyMapComponent from './components/MyMapComponent';
 
 const App = () => {
   return (
@@ -11,7 +14,7 @@ const App = () => {
       <TopBar />
 
       {/* Main Content */}
-      <Container fluid className="mt-3">
+      <Container fluid style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Row>
           <Col md={8}>
             {/* Left Side (Other content can go here) */}
@@ -29,9 +32,7 @@ const App = () => {
           <Col md={4}>
             {/* Right Side Image Placeholder */}
             <h3>Map Placeholder</h3>
-            <Placeholder as="div" className="w-100 h-100">
-              <Placeholder xs={12} className="h-100" />
-            </Placeholder>
+            <MyMapComponent/>
           </Col>
         </Row>
       </Container>
