@@ -13,6 +13,20 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.container {
+    display: flex;
+    justify-content: center; /* Horizontally center */
+    align-items: center; /* Vertically center */
+    height: 100vh; /* Full viewport height */
+    width: 100vh; /* full width*/
+}
+  
+.child {
+    width: 500x;
+    height: 300px;
+    background-color: lightblue;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
