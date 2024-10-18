@@ -9,11 +9,10 @@ import MyMapComponent from './components/MyMapComponent';
 const App = () => {
   return (
     <div>
-      {/* Main Content */}
-      <Container>
-        <Row>
-            <TopBar />
-        </Row>
+        {/* Main Content */}
+        <TopBar />
+        <Container>
+        
         <Row>
           <Col style = {{background:"lightblue"}}>
             {/* Left Side (Other content can go here) */}
