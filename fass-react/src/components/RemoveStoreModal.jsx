@@ -1,7 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 //maybe display list of all stores instead?
 const RemoveStoreModal = ({ show, handleClose }) => {
+  const [stores, setStores] = useState([]);  
+  const [selectedStore, setSelectedStore] = useState('');  
+
+  useEffect(() => {
+    fetch('http://localhost:8000/api/stores')
+      .then(response => response.json())
+      .then(data => {
+        setStores(data.stores);  // Set the list of stores from the API response
+      })
+      .catch(error => console.error('Error fetching stores:', error));
+  }, []);
+
   const [formData, setFormData] = useState({
     name: '',
     category: '',
@@ -40,6 +52,10 @@ const RemoveStoreModal = ({ show, handleClose }) => {
     }
   };
 
+  const handleSelectChange = (event) => {
+    setSelectedStore(event.target.value);  // Set selected store
+  };
+
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
@@ -47,18 +63,17 @@ const RemoveStoreModal = ({ show, handleClose }) => {
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
-          {/* Name Field */}
-          <Form.Group className="mb-3">
-            <Form.Label>Name</Form.Label>
-            <Form.Control 
-              type="text" 
-              placeholder="Enter name" 
-              name="name" 
-              value={formData.name} 
-              onChange={handleChange} 
-              required 
-            />
-          </Form.Group>
+          <Form.Group controlId="store-select">
+            <Form.Label>Choose a store:</Form.Label>
+            <Form.Select value={selectedStore} onChange={handleSelectChange}>
+              <option value="">--Select a store--</option>
+                {stores.map((store, index) => (
+                  <option key={index} value={store[2]}>
+                {store[2]} ({store[1]})
+              </option>
+          ))}
+        </Form.Select>
+      </Form.Group>
 
           <Button variant="primary" type="submit">
             Submit
