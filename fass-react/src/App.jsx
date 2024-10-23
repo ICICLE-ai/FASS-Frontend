@@ -5,6 +5,7 @@ import AddStoreButton from './components/AddStoreButton';
 import RemoveStoreButton from './components/RemoveStoreButton';
 import 'leaflet/dist/leaflet.css';
 import MyMapComponent from './components/MyMapComponent';
+import GetHouseholdButton from './components/GetHouseholdButton';
 
 const App = () => {
   return (
@@ -24,6 +25,8 @@ const App = () => {
             <RemoveStoreButton/>
             <br/>
             <Button variant="primary" className="mx-2">Step</Button>
+            <br/>
+            <GetHouseholdButton/>
             </div>
           </Col>
           
