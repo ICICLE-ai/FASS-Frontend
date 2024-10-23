@@ -6,38 +6,27 @@ const RemoveStoreModal = ({ show, handleClose }) => {
   const [selectedStore, setSelectedStore] = useState('');  
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/stores')
-      .then(response => response.json())
-      .then(data => {
-        setStores(data.stores);  // Set the list of stores from the API response
-      })
-      .catch(error => console.error('Error fetching stores:', error));
-  }, []);
-
-  const [formData, setFormData] = useState({
-    name: '',
-    category: '',
-    latitude: '',
-    longitude: '',
-  }); //ideally could have users add in an address but this is fine for MVP
-
-  // Handle input changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+    if (show) {
+        fetch('http://localhost:8000/api/stores')
+        .then(response => response.json())
+        .then(data => {
+            setStores(data.stores);  // Set the list of stores from the API response
+        })
+        .catch(error => console.error('Error fetching stores:', error));
+        }
+    }, [show]);
 
   // Handle form submission to the backend using fetch
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try { //placeholder
-      const response = await fetch('https://your-backend-api.com/remove-store', {
+      const response = await fetch('http://localhost:8000/api/remove-store', {
         method: 'POST', //delete store
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(selectedStore),
       });
 
       if (response.ok) {
@@ -57,7 +46,7 @@ const RemoveStoreModal = ({ show, handleClose }) => {
   };
 
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal show={show} onHide={handleClose} unmountOnExit>
       <Modal.Header closeButton>
         <Modal.Title>Remove Store</Modal.Title>
       </Modal.Header>
