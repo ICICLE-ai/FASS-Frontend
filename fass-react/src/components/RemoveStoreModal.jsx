@@ -32,7 +32,7 @@ const RemoveStoreModal = ({ show, handleClose }) => {
     e.preventDefault();
 
     try { //placeholder
-      const response = await fetch('https://your-backend-api.com/delete-store', {
+      const response = await fetch('https://your-backend-api.com/remove-store', {
         method: 'POST', //delete store
         headers: {
           'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ const RemoveStoreModal = ({ show, handleClose }) => {
         console.error('Error:', response.statusText);
       }
     } catch (error) {
-      console.error('Error adding object:', error);
+      console.error('Error removing object:', error);
     }
   };
 
@@ -69,8 +69,8 @@ const RemoveStoreModal = ({ show, handleClose }) => {
               <option value="">--Select a store--</option>
                 {stores.map((store, index) => (
                   <option key={index} value={store[2]}>
-                {store[2]} ({store[1]})
-              </option>
+                    {store[2]}
+                </option>
           ))}
         </Form.Select>
       </Form.Group>
