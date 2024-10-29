@@ -22,7 +22,7 @@ const RemoveStoreModal = ({ show, handleClose }) => {
 
     try { //placeholder
       const response = await fetch('http://localhost:8000/api/remove-store', {
-        method: 'POST', //delete store
+        method: 'DELETE', //delete store
         headers: {
           'Content-Type': 'application/json',
         },
