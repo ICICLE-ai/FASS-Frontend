@@ -18,7 +18,7 @@ const App = () => {
         <Row>
           <Col style = {{background:"lightblue"}}>
             {/* Left Side (Other content can go here) */}
-            <h3 class="col_header">Add or Remove Stores</h3>
+            <h3 className="col_header">Add or Remove Stores</h3>
             <div className="d-flex align-items-center flex-column">
             <br/>
             <AddStoreButton/>
@@ -35,12 +35,12 @@ const App = () => {
           
           <Col>
             {/* Right Side Image Placeholder */}
-            <h3 class="col_header">Simulation</h3>
+            <h3 className="col_header">Simulation</h3>
             <MyMapComponent/>
           </Col>
 
           <Col style = {{background:"lightblue"}}>
-            <h3 class="col_header">Data</h3>
+            <h3 className="col_header">Data</h3>
           </Col>
         </Row>
       </Container>
