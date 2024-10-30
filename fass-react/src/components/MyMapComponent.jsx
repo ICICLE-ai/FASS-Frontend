@@ -7,20 +7,31 @@ import 'proj4leaflet';
 
 const MyMapComponent = () => {
     const [households, setHouseholds] = useState([]);
+    const [stores, setStores] = useState([]);
 
     useEffect(() => {
         // Function to fetch households data
         const fetchHouseholds = async () => {
-        try {
-            const response = await fetch('http://localhost:8000/api/households'); // Replace with your API URL
-            const data = await response.json();
-            setHouseholds(data.households_json); // Assume data is an array of household objects
-        } catch (error) {
-            console.error("Error fetching households data:", error);
-        }
+            try {
+                const response = await fetch('http://localhost:8000/api/households');
+                const data = await response.json();
+                setHouseholds(data.households_json); // Assume data is an array of household objects
+            } catch (error) {
+                console.error("Error fetching households data:", error);
+            }
+        };
+        const fetchStores = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/api/stores');
+                const data = await response.json();
+                setStores(data.stores_json); // Assume data is an array of store objects
+            } catch (error) {
+                console.error("Error fetching stores data:", error);
+            }
         };
 
     fetchHouseholds();
+    fetchStores();
     }, []); // Empty dependency array means this effect runs only once when the component mounts\
 
     // Define the source and destination projections
@@ -63,11 +74,55 @@ const MyMapComponent = () => {
                 
                 <Polygon key={household[0]} positions={projectToEPSG4326(parsePolygon(household[1]))}>
                     <Popup>
-                        <div>
-                        </div>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Income: {household[2]}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Household Size: {household[3]}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Vehicles: {household[4]}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Number of Workers: {household[5]}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </Popup>
                 </Polygon>
             ))}
+            {stores.map((store, index) => (
+                
+                <Polygon key={index} positions={projectToEPSG4326(parsePolygon(store[1]))}>
+                    <Popup>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Name: {store[2]}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Type: {store[0]}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </Popup>
+                </Polygon>
+            ))}
+
             </MapContainer>
         </div>
     );
