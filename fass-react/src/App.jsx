@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import TopBar from './components/TopBar';
 import AddStoreButton from './components/AddStoreButton';
@@ -6,8 +6,26 @@ import RemoveStoreButton from './components/RemoveStoreButton';
 import 'leaflet/dist/leaflet.css';
 import MyMapComponent from './components/MyMapComponent';
 import ResetButton from './components/ResetButton';
+import StepButton from './components/StepButton';
 
 const App = () => {
+  const [stepNumber, setStepNumber] = useState(0);
+   
+  const updateStepNumber = (newStepNumber) => {
+      setStepNumber(newStepNumber);
+  };
+
+  useEffect(() => {
+    fetch('http://localhost:8000/api/get-step-number')
+    .then(response => response.json()) // Get the JSON response
+    .then(data => {
+        console.log(data); // Log the data to the console
+        setStepNumber(data["step_number"])
+    })
+    .catch(error => console.error('Error fetching stores:', error));
+  }, [])
+
+
   return (
     <div>
         {/* Main Content */}
@@ -24,7 +42,7 @@ const App = () => {
             <br/>
             <RemoveStoreButton/>
             <br/>
-            <Button variant="primary" className="mx-2">Step</Button>
+            <StepButton updateStepNumber={updateStepNumber}/>
             <br/>
             <br/>
             <ResetButton/>
@@ -39,6 +57,7 @@ const App = () => {
 
           <Col style = {{background:"lightblue"}}>
             <h3 className="col_header">Data</h3>
+            <p>Step: {stepNumber}</p>
           </Col>
         </Row>
       </Container>
