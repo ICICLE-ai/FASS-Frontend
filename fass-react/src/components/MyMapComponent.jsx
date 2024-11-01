@@ -47,7 +47,6 @@ const MyMapComponent = () => {
     return coordinates.map(coord => {
         // Convert each coordinate from EPSG:3857 to EPSG:4326
         const [x, y] = coord;
-        console.log(proj4(EPSG3857, EPSG4326, [x, y]).reverse())
         return proj4(EPSG3857, EPSG4326, [x, y]).reverse();
     });
     };
@@ -61,7 +60,6 @@ const MyMapComponent = () => {
         .split(", ")
         .map(coord => coord.split(" ").map(Number)); // Reverse to [lat, lng]
     };
-
     
     return (
         <div style={{ height: '75vh', width: '75vh' }}> {/* Set desired height and width */}
@@ -70,32 +68,31 @@ const MyMapComponent = () => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            {households.map((household) => (
-                
-                <Polygon key={household[0]} positions={projectToEPSG4326(parsePolygon(household[1]))}>
+            {households.map((household,index) => (
+                <Polygon key={index} positions={projectToEPSG4326(parsePolygon(household["Geometry"]))}>
                     <Popup>
                         <table>
                             <tbody>
-                                <tr>
-                                    <td>
-                                        Income: {household[2]}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Household Size: {household[3]}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Vehicles: {household[4]}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Number of Workers: {household[5]}
-                                    </td>
-                                </tr>
+                                {[
+                                    "Income",
+                                    "Household Size",
+                                    "Vehicles",
+                                    "Number of Workers",
+                                    "Stores within 1.0 Miles",
+                                    "Distance to the Closest Store",
+                                    "Rating for Distance to Closest Store",
+                                    "Rating for Number of Stores within 1.0 Miles",
+                                    "Ratings Based on Num of Vehicle",
+                                    "Transit time",
+                                    "Walking time",
+                                    "Biking time",
+                                    "Driving time",
+                                    "MFAI Score"
+                                ].map((label) => (
+                                    <tr>
+                                        <td>{label}: {household[label]}</td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </Popup>
