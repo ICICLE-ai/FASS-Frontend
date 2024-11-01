@@ -38,6 +38,8 @@ const MyMapComponent = () => {
     const EPSG3857 = 'EPSG:3857';
     const EPSG4326 = 'EPSG:4326';
 
+    let num_households = households.length
+
     // Configure proj4 with the EPSG:3857 and EPSG:4326 projections
     // I don't know why false northing is 27445. Just don't ask. It works.
     proj4.defs(EPSG3857, "+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=27445 +datum=WGS84 +units=m +no_defs");
@@ -69,7 +71,7 @@ const MyMapComponent = () => {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             {households.map((household,index) => (
-                <Polygon key={index} positions={projectToEPSG4326(parsePolygon(household["Geometry"]))}>
+                <Polygon key={index} positions={projectToEPSG4326(parsePolygon(household["Geometry"]))} pathOptions = {{ color: household["Color"], weight: 2 }}>
                     <Popup>
                         <table>
                             <tbody>
@@ -89,7 +91,7 @@ const MyMapComponent = () => {
                                     "Driving time",
                                     "MFAI Score"
                                 ].map((label) => (
-                                    <tr>
+                                    <tr key = {index}>
                                         <td>{label}: {household[label]}</td>
                                     </tr>
                                 ))}
@@ -100,7 +102,7 @@ const MyMapComponent = () => {
             ))}
             {stores.map((store, index) => (
                 
-                <Polygon key={index} positions={projectToEPSG4326(parsePolygon(store[1]))}>
+                <Polygon key={index+num_households} positions={projectToEPSG4326(parsePolygon(store[1]))}>
                     <Popup>
                         <table>
                             <tbody>
