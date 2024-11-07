@@ -26,7 +26,7 @@ const StepButton = ({updateStepNumber}) => {
 
     return (
       <>
-       <Button variant="primary" onClick={step}>
+       <Button variant="primary" onClick={() => { step(); updateStepNumber(); }}>
         Step
         </Button>
       </>
