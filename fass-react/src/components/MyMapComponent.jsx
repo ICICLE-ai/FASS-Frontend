@@ -1,13 +1,14 @@
 // Import necessary modules
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polygon } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import proj4 from 'proj4';
 import 'proj4leaflet';
+import { StoreContext } from '../App';
 
 const MyMapComponent = ({ reloadPopups }) => {
     const [households, setHouseholds] = useState([]);
-    const [stores, setStores] = useState([]);
+    const {stores,setStores} = useContext(StoreContext);
     const [popupReloadKey, setPopupReloadKey] = useState(0);
 
     // Update key whenever `reloadPopups` changes
@@ -28,19 +29,19 @@ const MyMapComponent = ({ reloadPopups }) => {
                 console.error("Error fetching households data:", error);
             }
         };
-        const fetchStores = async () => {
-            try {
-                const response = await fetch('http://localhost:8000/api/stores');
-                const data = await response.json();
-                setStores(data.stores_json); // Assume data is an array of store objects
-            } catch (error) {
-                console.error("Error fetching stores data:", error);
-            }
-        };
+        // const fetchStores = async () => {
+        //     try {
+        //         const response = await fetch('http://localhost:8000/api/stores');
+        //         const data = await response.json();
+        //         setStores(data.stores_json); // Assume data is an array of store objects
+        //     } catch (error) {
+        //         console.error("Error fetching stores data:", error);
+        //     }
+        // };
 
     fetchHouseholds();
-    fetchStores();
-    }, []); // Empty dependency array means this effect runs only once when the component mounts\
+    //fetchStores();
+    }, [stores]); // Empty dependency array means this effect runs only once when the component mounts\
 
     // Define the source and destination projections
     const EPSG3857 = 'EPSG:3857';
@@ -107,7 +108,7 @@ const MyMapComponent = ({ reloadPopups }) => {
                     </Popup>
                 </Polygon>
             ))}
-            {stores.map((store, index) => (
+            {(stores.map((store, index) => (
                 
                 <Polygon key={index+num_households+1} positions={projectToEPSG4326(parsePolygon(store[1]))}>
                     <Popup>
@@ -127,7 +128,8 @@ const MyMapComponent = ({ reloadPopups }) => {
                         </table>
                     </Popup>
                 </Polygon>
-            ))}
+            )))}
+
             </MapContainer>
         </div>
     );

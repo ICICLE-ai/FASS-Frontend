@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, createContext } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import TopBar from './components/TopBar';
 import AddStoreButton from './components/AddStoreButton';
@@ -9,6 +9,7 @@ import ResetButton from './components/ResetButton';
 import StepButton from './components/StepButton';
 import { initializeMap } from './MapComponent';
 
+export const StoreContext = createContext();
 const App = () => {
   const [stepNumber, setStepNumber] = useState(0);
   const [reloadPopups, setReloadPopups] = useState(0);
@@ -31,8 +32,19 @@ const App = () => {
     .catch(error => console.error('Error fetching stores:', error));
   }, [])
 
+  const [stores, setStores] = useState([]);
+  useEffect(() => {
+    fetch('http://localhost:8000/api/stores')
+    .then(response => response.json())
+    .then(data => {
+        setStores(data.stores_json);  // Set the list of stores from the API response
+    })
+    .catch(error => console.error('Error fetching stores:', error));
+  }
+, []);
 
   return (
+    <StoreContext.Provider value={{stores, setStores}}>
     <div>
         {/* Main Content */}
         <TopBar />
@@ -68,6 +80,7 @@ const App = () => {
         </Row>
       </Container>
     </div>
+    </StoreContext.Provider>
   );
 };
 

@@ -1,26 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { StoreContext } from '../App';
 //maybe display list of all stores instead?
 const RemoveStoreModal = ({ show, handleClose }) => {
-  const [stores, setStores] = useState([]);  
+  const {stores, setStores} = useContext(StoreContext)  
   const [selectedStore, setSelectedStore] = useState('');  
-
-  useEffect(() => {
-    if (show) {
-        fetch('http://localhost:8000/api/stores')
-        .then(response => response.json())
-        .then(data => {
-            setStores(data.stores);  // Set the list of stores from the API response
-        })
-        .catch(error => console.error('Error fetching stores:', error));
-        }
-    }, [show]);
 
   // Handle form submission to the backend using fetch
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try { //placeholder
+    try {
       const response = await fetch('http://localhost:8000/api/remove-store', {
         method: 'DELETE', //delete store
         headers: {
@@ -32,6 +22,7 @@ const RemoveStoreModal = ({ show, handleClose }) => {
       if (response.ok) {
         const responseData = await response.json();
         console.log('Success:', responseData);
+        setStores(responseData.store_json)
         handleClose();  // Close modal on successful submission
       } else {
         console.error('Error:', response.statusText);
@@ -56,11 +47,11 @@ const RemoveStoreModal = ({ show, handleClose }) => {
             <Form.Label>Choose a store:</Form.Label>
             <Form.Select value={selectedStore} onChange={handleSelectChange}>
               <option value="">--Select a store--</option>
-                {stores.map((store, index) => (
+                {stores ? (stores.map((store, index) => (
                   <option key={index} value={store[2]}>
                     {store[2]}
                 </option>
-          ))}
+          ))) : (<></>)}
         </Form.Select>
       </Form.Group>
 
