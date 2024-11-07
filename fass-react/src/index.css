@@ -14,7 +14,6 @@
     --spacing-margin: 0.6em;
 }
 
-
 .container {
     display: flex;
     flex-direction: column; /* Stacks elements vertically */
