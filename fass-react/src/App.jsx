@@ -11,9 +11,12 @@ import StepButton from './components/StepButton';
 export const StoreContext = createContext();
 const App = () => {
   const [stepNumber, setStepNumber] = useState(0);
+
+  const [reloadPopups, setReloadPopups] = useState(0);
    
   const updateStepNumber = (newStepNumber) => {
       setStepNumber(newStepNumber);
+      setReloadPopups(prev => prev + 1);
   };
 
   useEffect(() => {
@@ -64,7 +67,7 @@ const App = () => {
           <Col>
             {/* Right Side Image Placeholder */}
             <h3 className="col_header">Simulation</h3>
-            <MyMapComponent/>
+            <MyMapComponent reloadPopups = {reloadPopups}/>
           </Col>
 
           <Col style = {{background:"lightblue"}}>
