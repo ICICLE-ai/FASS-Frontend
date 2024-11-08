@@ -52,7 +52,7 @@ export function initializeMap(mapId, households, stores) {
     const householdLayer = L.layerGroup().addTo(map);
 
     // Function to render households
-    function render_households(newHouseholds) {
+    function render_households(newHouseholds, newStores) {
         householdLayer.clearLayers(); // Clear the existing households from the layer
 
         newHouseholds.forEach((household, index) => {
@@ -96,10 +96,39 @@ export function initializeMap(mapId, households, stores) {
 
             householdLayer.addLayer(polygon);
         });
+
+        newStores.forEach((store, index) => {
+            const positions = projectToEPSG4326(parsePolygon(store[1]));
+
+            const polygon = L.polygon(positions, {
+                color: "blue",
+                weight: 3
+            });
+
+            const table = document.createElement("table");
+            const tbody = document.createElement("tbody");
+
+            const tr1 = document.createElement("tr");
+            const td1 = document.createElement("td");
+            td1.textContent = `Name: ${store[2]}`;
+            tr1.appendChild(td1);
+            tbody.appendChild(tr1);
+
+            const tr2 = document.createElement("tr");
+            const td2 = document.createElement("td");
+            td2.textContent = `Type: ${store[0]}`;
+            tr2.appendChild(td2);
+            tbody.appendChild(tr2);
+
+            table.appendChild(tbody);
+            polygon.bindPopup(table);
+
+            householdLayer.addLayer(polygon);
+        });
     }
 
     // Render the initial households
-    render_households(households);
+    render_households(households,stores);
 
     // Return the map and the render_households function so it can be called externally if needed
     return { map, render_households };

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-
+import { StoreContext } from '../App';
 
 const AddStoreModal = ({ show, handleClose }) => {
+    const {stores, setStores} = useContext(StoreContext)  
   const [formData, setFormData] = useState({
     name: '',
     category: '',
@@ -17,33 +18,48 @@ const AddStoreModal = ({ show, handleClose }) => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleSelectChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };  
 
   // Handle form submission to the backend using fetch
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-
     try {
-      console.log(formData)
-      const response = await fetch('http://localhost:8000/api/add-store', {
-        method: 'POST', //placeholder api call
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-
-      if (response.ok) {
-        const responseData = await response.json();
-        console.log('Success:', responseData);
-        handleClose();  // Close modal on successful submission
-      } else {
-        console.error('Error:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error adding object:', error);
-    }
+        const response = await fetch('http://localhost:8000/api/add-store', {
+          method: 'POST', // placeholder API call
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+      
+        if (response.ok) {
+          const responseData = await response.json();
+          console.log('Success:', responseData);
+    
+          // Fetch updated list of stores
+          try {
+            const storesResponse = await fetch('http://localhost:8000/api/stores');
+            if (storesResponse.ok) {
+              const storesData = await storesResponse.json();
+              setStores(storesData.stores_json); // Set the list of stores from the API response
+            } else {
+              console.error('Error fetching stores:', storesResponse.statusText);
+            }
+          } catch (error) {
+            console.error('Error fetching stores:', error);
+          }
+      
+          handleClose(); // Close modal on successful submission
+        } else {
+          console.error('Error:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error adding store:', error);
+      }      
   };
 
 
@@ -69,16 +85,18 @@ const AddStoreModal = ({ show, handleClose }) => {
 
 
           {/* Category Field */}
-          <Form.Group className="mb-3">
-            <Form.Label>Category</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter category"
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-            />
-          </Form.Group>
+            <Form.Group className="mb-3">
+            <Form.Label>Choose a store:</Form.Label>
+            <Form.Select
+                name="category" // Added name attribute
+                value={formData.category}
+                onChange={handleSelectChange}
+            >
+                <option value="">--Select a store--</option>
+                <option value="supermarket">Supermarket</option>
+                <option value="convenience">Convenience Store</option>
+            </Form.Select>
+            </Form.Group>
 
 
           {/* Latitude */}

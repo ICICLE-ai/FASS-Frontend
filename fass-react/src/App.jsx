@@ -20,6 +20,7 @@ const App = () => {
   };
 
   useEffect(() => {
+    console.log("get step number call")
     fetch('http://localhost:8000/api/get-step-number')
     .then(response => response.json()) // Get the JSON response
     .then(data => {
@@ -31,6 +32,7 @@ const App = () => {
 
   const [stores, setStores] = useState([]);
   useEffect(() => {
+    console.log("stores call")
     fetch('http://localhost:8000/api/stores')
     .then(response => response.json())
     .then(data => {
@@ -41,6 +43,7 @@ const App = () => {
 
   const [households, setHouseholds] = useState([]);
   useEffect(() => {
+    console.log("households call")
     fetch('http://localhost:8000/api/households')
     .then(response => response.json())
     .then(data => {
@@ -50,11 +53,8 @@ const App = () => {
   }, [stepNumber]);
 
     useEffect(() => {
-        console.log("here")
-        console.log(households.length)
-        console.log(stores.length)
-        console.log(mapRef.current)
-        if (/*households.length > 0 && stores.length > 0 && */!mapRef.current) {
+        console.log("create map call")
+        if (!mapRef.current) {
             const { map, render_households } = initializeMap('map', households, stores); // Initialize map with empty stores initially
             mapRef.current = map;
             renderHouseholdsRef.current = render_households; // Store render_households function in a ref
@@ -62,8 +62,9 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        if (renderHouseholdsRef.current) {
-            renderHouseholdsRef.current(households); // Store render_households function in a ref
+        console.log("rerender agents call")
+        if (renderHouseholdsRef.current && households.length > 0 && stores.length > 0) {
+            renderHouseholdsRef.current(households,stores);
         }
     }, [households,stores])
 
