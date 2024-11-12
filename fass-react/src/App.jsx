@@ -6,6 +6,7 @@ import RemoveStoreButton from './components/RemoveStoreButton';
 import ResetButton from './components/ResetButton';
 import StepButton from './components/StepButton';
 import { initializeMap } from './components/MapComponent';
+import Legend from './components/LegendComponent'
 
 export const StoreContext = createContext();
 export const HouseholdContext = createContext();
@@ -94,7 +95,7 @@ const App = () => {
                         
                         <Col>
                             <h3 className="col_header">Simulation</h3>
-                            <div id="map" style={{height: '75vh',width: '75vh'}}></div>
+                            <div id="map" style={{height: '75vh',width: '75vh'}}><Legend/></div>
                         </Col>
 
                         <Col style = {{background:"lightblue"}}>
