@@ -7,6 +7,7 @@ import ResetButton from './components/ResetButton';
 import StepButton from './components/StepButton';
 import { initializeMap } from './components/MapComponent';
 import Legend from './components/LegendComponent'
+import DataComponent from './components/DataComponent';
 
 export const StoreContext = createContext();
 export const HouseholdContext = createContext();
@@ -70,7 +71,7 @@ const App = () => {
     }, [households,stores])
 
   return (
-    <StoreContext.Provider value={{stores, setStores}}>
+    <StoreContext.Provider value={{stores, setStores, stepNumber}}>
         <HouseholdContext.Provider value={{households, setHouseholds}}>
             <div>
                 {/* Main Content */}
@@ -101,6 +102,7 @@ const App = () => {
                         <Col style = {{background:"lightblue"}}>
                             <h3 className="col_header">Data</h3>
                             <p>Step: {stepNumber}</p>
+                            <DataComponent/>
                         </Col>
                     </Row>
                 </Container>
