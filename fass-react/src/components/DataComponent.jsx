@@ -46,17 +46,25 @@ const DataComponent = () => {
         getHouseholdStats(); //technically households and household stats can just be run once on initialization 
         getNumHouseholds();
     },[])
+    const formatCurrency = (value) => {
+        const currency = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+          }).format(value)
+        return currency
+    }
     return (
     <div>
         <b>Step: {stepNumber}</b>
         <p></p>
         <p>State: Ohio</p>
         <p>County: Franklin</p>
-        <p>Number of Households: {numHouseholds}</p>
-        <p>Number of Supermarkets: {numSPM}</p>
-        <p>Number of Non-Supermarkets: {numNonSPM}</p>
-        <p>Average Income per Household: {avgIncome.toFixed(2)}</p>
-        <p>Average Vehicles per Household: {avgVehicles.toFixed(2)}</p>
+        <p>Household Count: {numHouseholds}</p>
+        <p>SPM Count: {numSPM}</p>
+        <p>CSPM Count: {numNonSPM}</p>
+        <p>Avg Household Income: {formatCurrency(avgIncome)}
+  </p>
+        <p>Avg Household Vehicles: {avgVehicles.toFixed(2)}</p>
     </div>
     );
 

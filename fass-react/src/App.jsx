@@ -91,12 +91,13 @@ const App = () => {
                             <br/>
                             <br/>
                             <ResetButton/>
+                            <Legend/>
                             </div>
                         </Col>
                         
                         <Col>
                             <h3 className="col_header">Simulation</h3>
-                            <div id="map" style={{height: '75vh',width: '75vh'}}><Legend/></div>
+                            <div id="map" style={{height: '75vh',width: '75vh'}}></div>
                         </Col>
 
                         <Col style = {{background:"lightblue"}}>
