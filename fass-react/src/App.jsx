@@ -101,7 +101,6 @@ const App = () => {
 
                         <Col style = {{background:"lightblue"}}>
                             <h3 className="col_header">Data</h3>
-                            <p>Step: {stepNumber}</p>
                             <DataComponent/>
                         </Col>
                     </Row>
