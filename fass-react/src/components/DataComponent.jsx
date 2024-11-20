@@ -60,10 +60,9 @@ const DataComponent = () => {
         <p>State: Ohio</p>
         <p>County: Franklin</p>
         <p>Household Count: {numHouseholds}</p>
-        <p>SPM Count: {numSPM}</p>
-        <p>CSPM Count: {numNonSPM}</p>
-        <p>Avg Household Income: {formatCurrency(avgIncome)}
-  </p>
+        <p>Number of Supermarkets: {numSPM}</p>
+        <p>Number of Convenience: {numNonSPM}</p>
+        <p>Avg Household Income: {formatCurrency(avgIncome)}</p>
         <p>Avg Household Vehicles: {avgVehicles.toFixed(2)}</p>
     </div>
     );

@@ -71,16 +71,10 @@ export function initializeMap(mapId, households, stores) {
                 "Household Size",
                 "Vehicles",
                 "Number of Workers",
-                "Stores within 1.0 Miles",
-                "Distance to the Closest Store",
-                "Rating for Distance to Closest Store",
-                "Rating for Number of Stores within 1.0 Miles",
-                "Ratings Based on Num of Vehicle",
+                "Stores within 1 Mile",
+                "Closest Store (Miles)",
                 "Transit time",
-                "Walking time",
-                "Biking time",
-                "Driving time",
-                "MFAI Score"
+                "Food Access Score"
             ];
 
             labels.forEach(label => {

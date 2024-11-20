@@ -86,13 +86,13 @@ const AddStoreModal = ({ show, handleClose }) => {
 
           {/* Category Field */}
             <Form.Group className="mb-3">
-            <Form.Label>Choose a store:</Form.Label>
+            <Form.Label>Choose Type of Store:</Form.Label>
             <Form.Select
                 name="category" // Added name attribute
                 value={formData.category}
                 onChange={handleSelectChange}
             >
-                <option value="">--Select a store--</option>
+                <option value="">--Select Store Type--</option>
                 <option value="supermarket">Supermarket</option>
                 <option value="convenience">Convenience Store</option>
             </Form.Select>
@@ -103,7 +103,7 @@ const AddStoreModal = ({ show, handleClose }) => {
           <Form.Group className="mb-3">
             <Form.Label>Latitude</Form.Label>
             <Form.Control
-              type="number"
+              type="text"
               placeholder="Enter latitude"
               name="latitude"
               value={formData.latitude}
@@ -116,7 +116,7 @@ const AddStoreModal = ({ show, handleClose }) => {
           <Form.Group className="mb-3">
             <Form.Label>Longitude</Form.Label>
             <Form.Control
-              type="number"
+              type="text"
               placeholder="Enter longitude"
               name="longitude"
               value={formData.longitude}

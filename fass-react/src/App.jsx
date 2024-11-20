@@ -4,6 +4,7 @@ import TopBar from './components/TopBar';
 import AddStoreButton from './components/AddStoreButton';
 import RemoveStoreButton from './components/RemoveStoreButton';
 import ResetButton from './components/ResetButton';
+import ReportButton from './components/ReportButton';
 import StepButton from './components/StepButton';
 import { initializeMap } from './components/MapComponent';
 import Legend from './components/LegendComponent'
@@ -91,13 +92,14 @@ const App = () => {
                             <br/>
                             <br/>
                             <ResetButton/>
-                            <Legend/>
+                            <br/>
+                            <ReportButton/>
                             </div>
                         </Col>
                         
                         <Col>
                             <h3 className="col_header">Simulation</h3>
-                            <div id="map" style={{height: '75vh',width: '75vh'}}></div>
+                            <div id="map" style={{height: '75vh',width: '75vh'}}><Legend/></div>
                         </Col>
 
                         <Col style = {{background:"lightblue"}}>

@@ -35,9 +35,9 @@ const colorBoxStyle = {
 const legendItems = [
     { icon: <PiHexagonDuotone color="blue" />, label: 'Supermarket' },
     { icon: <PiTriangleDuotone color="blue" />, label: 'Convenience Store' },
-    { icon: <PiHouseSimpleFill color="#52DF20"/>, label: 'Household MFAI: [75, 100]' },
-    { icon: <PiHouseSimpleFill color="#D8DF20"/>, label: 'Household MFAI: [50, 75]' },
-    { icon: <PiHouseSimpleFill color="#CD571D"/>, label: 'Household MFAI: [0, 50]' }
+    { icon: <PiHouseSimpleFill color="#52DF20"/>, label: 'Household With High Food Access' },
+    { icon: <PiHouseSimpleFill color="#D8DF20"/>, label: 'Household With Fair Food Access' },
+    { icon: <PiHouseSimpleFill color="#CD571D"/>, label: 'Household With Low Food Access' }
 ];
 
 const Legend = () => {
