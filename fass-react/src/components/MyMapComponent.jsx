@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import proj4 from 'proj4';
 import 'proj4leaflet';
 import { StoreContext } from '../App';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const MyMapComponent = ({ reloadPopups }) => {
     const [households, setHouseholds] = useState([]);
@@ -22,22 +23,13 @@ const MyMapComponent = ({ reloadPopups }) => {
         // Function to fetch households data
         const fetchHouseholds = async () => {
             try {
-                const response = await fetch('http://localhost:8000/api/households');
+                const response = await fetch(`${apiUrl}/households`);
                 const data = await response.json();
                 setHouseholds(data.households_json); // Assume data is an array of household objects
             } catch (error) {
                 console.error("Error fetching households data:", error);
             }
         };
-        // const fetchStores = async () => {
-        //     try {
-        //         const response = await fetch('http://localhost:8000/api/stores');
-        //         const data = await response.json();
-        //         setStores(data.stores_json); // Assume data is an array of store objects
-        //     } catch (error) {
-        //         console.error("Error fetching stores data:", error);
-        //     }
-        // };
 
     fetchHouseholds();
     //fetchStores();

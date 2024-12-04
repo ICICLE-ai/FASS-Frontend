@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 
 const StepButton = ({updateStepNumber}) => {
 
     const step = () => {
-        fetch('http://localhost:8000/api/step', {
+        fetch(`${apiUrl}/step`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',

@@ -5,13 +5,14 @@ import { StoreContext } from '../App';
 const RemoveStoreModal = ({ show, handleClose }) => {
   const {stores, setStores} = useContext(StoreContext)  
   const [selectedStore, setSelectedStore] = useState('');  
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   // Handle form submission to the backend using fetch
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:8000/api/remove-store', {
+      const response = await fetch(`${apiUrl}remove-store`, {
         method: 'DELETE', //delete store
         headers: {
           'Content-Type': 'application/json',

@@ -12,6 +12,7 @@ import DataComponent from './components/DataComponent';
 
 export const StoreContext = createContext();
 export const HouseholdContext = createContext();
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const App = () => {
   const [stepNumber, setStepNumber] = useState(0);
@@ -24,7 +25,7 @@ const App = () => {
 
   useEffect(() => {
     console.log("get step number call")
-    fetch('http://localhost:8000/api/get-step-number')
+    fetch(`${apiUrl}/get-step-number`)
     .then(response => response.json()) // Get the JSON response
     .then(data => {
         console.log(data); // Log the data to the console
@@ -36,7 +37,7 @@ const App = () => {
   const [stores, setStores] = useState([]);
   useEffect(() => {
     console.log("stores call")
-    fetch('http://localhost:8000/api/stores')
+    fetch(`${apiUrl}/stores`)
     .then(response => response.json())
     .then(data => {
         setStores(data.stores_json);  // Set the list of stores from the API response
@@ -47,7 +48,7 @@ const App = () => {
   const [households, setHouseholds] = useState([]);
   useEffect(() => {
     console.log("households call")
-    fetch('http://localhost:8000/api/households')
+    fetch(`${apiUrl}/households`)
     .then(response => response.json())
     .then(data => {
         setHouseholds(data.households_json);  // Set the list of stores from the API response

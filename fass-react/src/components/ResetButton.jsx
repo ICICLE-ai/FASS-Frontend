@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react';
 import {Button} from 'react-bootstrap';
 import { StoreContext } from '../App';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const ResetButton = () => { 
     const {stores,setStores} = useContext(StoreContext);
     const reset = () => {
-       fetch('http://localhost:8000/api/reset', {
+       fetch(`${apiUrl}/reset`, {
         method: 'PUT',  // Specify the HTTP method as POST
         headers: {
             'Content-Type': 'application/json',  // Specify that we're sending JSON
