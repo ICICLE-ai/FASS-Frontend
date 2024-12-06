@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
-const apiUrl = process.env.API_URL;
+const apiUrl = import.meta.env.API_URL;
 
 
 const StepButton = ({updateStepNumber}) => {
