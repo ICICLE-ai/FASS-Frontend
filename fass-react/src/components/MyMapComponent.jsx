@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import proj4 from 'proj4';
 import 'proj4leaflet';
 import { StoreContext } from '../App';
-const apiUrl = import.meta.env.API_URL;
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const MyMapComponent = ({ reloadPopups }) => {
     const [households, setHouseholds] = useState([]);

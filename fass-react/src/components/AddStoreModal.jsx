@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { StoreContext } from '../App';
-const apiUrl = import.meta.env.API_URL;
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const AddStoreModal = ({ show, handleClose }) => {
     const {stores, setStores} = useContext(StoreContext)  

@@ -12,7 +12,7 @@ import DataComponent from './components/DataComponent';
 
 export const StoreContext = createContext();
 export const HouseholdContext = createContext();
-const apiUrl = import.meta.env.API_URL;
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const App = () => {
   const [stepNumber, setStepNumber] = useState(0);
