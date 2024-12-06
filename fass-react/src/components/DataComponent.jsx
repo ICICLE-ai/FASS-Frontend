@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { StoreContext } from '../App';
-const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = process.env.API_URL;
 
 const DataComponent = () => {
     const {stepNumber, stores} = useContext(StoreContext)

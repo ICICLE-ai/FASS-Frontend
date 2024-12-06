@@ -12,7 +12,7 @@ import DataComponent from './components/DataComponent';
 
 export const StoreContext = createContext();
 export const HouseholdContext = createContext();
-const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = process.env.API_URL;
 
 const App = () => {
   const [stepNumber, setStepNumber] = useState(0);

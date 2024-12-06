@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import {Button} from 'react-bootstrap';
 import { StoreContext } from '../App';
-const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = process.env.API_URL;
 
 const ResetButton = () => { 
     const {stores,setStores} = useContext(StoreContext);

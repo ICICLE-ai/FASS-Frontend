@@ -5,7 +5,7 @@ import { StoreContext } from '../App';
 const RemoveStoreModal = ({ show, handleClose }) => {
   const {stores, setStores} = useContext(StoreContext)  
   const [selectedStore, setSelectedStore] = useState('');  
-  const apiUrl = process.env.REACT_APP_API_URL;
+  const apiUrl = process.env.API_URL;
 
   // Handle form submission to the backend using fetch
   const handleSubmit = async (e) => {
