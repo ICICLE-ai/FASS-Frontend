@@ -13,6 +13,7 @@ import DataComponent from './components/DataComponent';
 export const StoreContext = createContext();
 export const HouseholdContext = createContext();
 const apiUrl = import.meta.env.VITE_API_URL;
+console.log(apiUrl)
 
 const App = () => {
   const [stepNumber, setStepNumber] = useState(0);
@@ -48,6 +49,7 @@ const App = () => {
   const [households, setHouseholds] = useState([]);
   useEffect(() => {
     console.log("households call")
+    console.log(apiUrl)
     fetch(`${apiUrl}/households`)
     .then(response => response.json())
     .then(data => {
