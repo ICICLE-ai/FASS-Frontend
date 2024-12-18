@@ -79,7 +79,7 @@ const App = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 {/* Left Column */}
                 <div className="bg-blue-200 p-6 rounded-lg shadow-md h-[400px] md:min-h-[80vh]">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Add or Remove Stores</h3>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Features</h3>
                     <div className="space-y-4 flex flex-col items-center">
                     <AddStoreButton />
                     <RemoveStoreButton />
