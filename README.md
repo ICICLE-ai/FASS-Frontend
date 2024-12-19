@@ -131,7 +131,7 @@ This is an example of how to list things you need to use the software and how to
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-For more information on usage, please read this [User Guide](docs/FASS_User_Guide.pdf)
+For more information on usage, please read this [User Guide](assets/FASS_User_Guide.pdf)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
