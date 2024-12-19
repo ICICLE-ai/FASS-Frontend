@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { StoreContext } from '../App';
-const apiUrl = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "__API__URL__";
 
 const DataComponent = () => {
     const {stepNumber, stores} = useContext(StoreContext)
@@ -12,7 +12,7 @@ const DataComponent = () => {
     useEffect(() => {
         const getNumStores = async () => {
             try {
-                const response = await fetch(`${apiUrl}/get-num-stores`); // Your API endpoint
+                const response = await fetch(`${API_URL}/get-num-stores`); // Your API endpoint
                 const data = await response.json();
                 setNumSPM(data.numSPM);
                 setNumNonSPM(data.numNonSPM); 
@@ -27,7 +27,7 @@ const DataComponent = () => {
         // Triggered whenever `step` changes
         const getNumHouseholds = async () => {
             try {
-                const response = await fetch(`${apiUrl}/get-num-households`); // Your API endpoint
+                const response = await fetch(`${API_URL}/get-num-households`); // Your API endpoint
                 const data = await response.json();
                 setNumHouseholds(data.num_households); 
             } catch (error) {
@@ -36,7 +36,7 @@ const DataComponent = () => {
         };
         const getHouseholdStats = async () => {
             try {
-                const response = await fetch(`${apiUrl}/get-household-stats`); // Your API endpoint
+                const response = await fetch(`${API_URL}/get-household-stats`); // Your API endpoint
                 const data = await response.json();
                 setAvgIncome(data.avg_income)
                 setAvgVehicles(data.avg_vehicles)

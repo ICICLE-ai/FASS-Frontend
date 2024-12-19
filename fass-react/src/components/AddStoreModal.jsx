@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { StoreContext } from '../App';
-const apiUrl = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "__API__URL__";
 
 const AddStoreModal = ({ show, handleClose }) => {
     const {stores, setStores} = useContext(StoreContext)  
@@ -29,7 +29,7 @@ const AddStoreModal = ({ show, handleClose }) => {
     e.preventDefault();
 
     try {
-        const response = await fetch(`${apiUrl}/add-store`, {
+        const response = await fetch(`${API_URL}/add-store`, {
           method: 'POST', // placeholder API call
           headers: {
             'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ const AddStoreModal = ({ show, handleClose }) => {
     
           // Fetch updated list of stores
           try {
-            const storesResponse = await fetch(`${apiUrl}/stores`);
+            const storesResponse = await fetch(`${API_URL}/stores`);
             if (storesResponse.ok) {
               const storesData = await storesResponse.json();
               setStores(storesData.stores_json); // Set the list of stores from the API response

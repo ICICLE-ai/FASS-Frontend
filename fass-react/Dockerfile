@@ -18,7 +18,7 @@ RUN npm run build
 RUN ls -al /app/dist
 
 # Production Stage
-FROM nginx:latest
+FROM nginx:latest as prod-stage
 
 # Copy the NGINX configuration file
 COPY nginx.conf /etc/nginx/conf.d/default.conf

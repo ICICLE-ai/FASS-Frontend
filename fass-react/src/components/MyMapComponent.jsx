@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import proj4 from 'proj4';
 import 'proj4leaflet';
 import { StoreContext } from '../App';
-const apiUrl = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "__API__URL__";
 
 const MyMapComponent = ({ reloadPopups }) => {
     const [households, setHouseholds] = useState([]);
@@ -23,7 +23,7 @@ const MyMapComponent = ({ reloadPopups }) => {
         // Function to fetch households data
         const fetchHouseholds = async () => {
             try {
-                const response = await fetch(`${apiUrl}/households`);
+                const response = await fetch(`${API_URL}/households`);
                 const data = await response.json();
                 setHouseholds(data.households_json); // Assume data is an array of household objects
             } catch (error) {

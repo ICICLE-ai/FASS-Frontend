@@ -12,7 +12,7 @@ const RemoveStoreModal = ({ show, handleClose }) => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${apiUrl}/remove-store`, {
+      const response = await fetch(`${API_URL}remove-store`, {
         method: 'DELETE', //delete store
         headers: {
           'Content-Type': 'application/json',

@@ -13,46 +13,48 @@ import './index.css'
 
 export const StoreContext = createContext();
 export const HouseholdContext = createContext();
-const apiUrl = import.meta.env.VITE_API_URL;
-
-console.log(apiUrl);
+const API_URL = import.meta.env.VITE_API_URL || "__API__URL__";
 
 const App = () => {
   const [stepNumber, setStepNumber] = useState(0);
   const mapRef = useRef(null); // Store the map instance
   const renderHouseholdsRef = useRef(null); // Reference for render_households function
-
+   
   const updateStepNumber = (newStepNumber) => {
-    setStepNumber(newStepNumber);
+      setStepNumber(newStepNumber);
   };
 
   useEffect(() => {
-    fetch(`${apiUrl}/get-step-number`)
-      .then((response) => response.json())
-      .then((data) => {
-        setStepNumber(data['step_number']);
-      })
-      .catch((error) => console.error('Error fetching step number:', error));
-  }, []);
+    console.log("get step number call")
+    fetch(`${API_URL}/get-step-number`)
+    .then(response => response.json()) // Get the JSON response
+    .then(data => {
+        console.log(data); // Log the data to the console
+        setStepNumber(data["step_number"])
+    })
+    .catch(error => console.error('Error fetching step number:', error));
+  }, [])
 
   const [stores, setStores] = useState([]);
   useEffect(() => {
-    fetch(`${apiUrl}/stores`)
-      .then((response) => response.json())
-      .then((data) => {
-        setStores(data.stores_json);
-      })
-      .catch((error) => console.error('Error fetching stores:', error));
+    console.log("stores call")
+    fetch(`${API_URL}/stores`)
+    .then(response => response.json())
+    .then(data => {
+        setStores(data.stores_json);  // Set the list of stores from the API response
+    })
+    .catch(error => console.error('Error fetching stores:', error));
   }, []);
 
   const [households, setHouseholds] = useState([]);
   useEffect(() => {
-    fetch(`${apiUrl}/households`)
-      .then((response) => response.json())
-      .then((data) => {
-        setHouseholds(data.households_json);
-      })
-      .catch((error) => console.error('Error fetching households:', error));
+    console.log("households call")
+    fetch(`${API_URL}/households`)
+    .then(response => response.json())
+    .then(data => {
+        setHouseholds(data.households_json);  // Set the list of stores from the API response
+    })
+    .catch(error => console.error('Error fetching households:', error));
   }, [stepNumber]);
 
   useEffect(() => {
