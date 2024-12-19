@@ -104,6 +104,7 @@ const App = () => {
                 </div>
             </div>
             </div>
+            <h1>Copyright</h1>
       </HouseholdContext.Provider>
     </StoreContext.Provider>
   );
