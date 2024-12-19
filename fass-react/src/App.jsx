@@ -84,8 +84,6 @@ const App = () => {
                     <AddStoreButton />
                     <RemoveStoreButton />
                     <StepButton updateStepNumber={updateStepNumber} />
-                    <ResetButton />
-                    <ReportButton />
                     </div>
                 </div>
 
