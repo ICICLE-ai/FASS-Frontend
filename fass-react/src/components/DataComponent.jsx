@@ -35,22 +35,35 @@ const DataComponent = () => {
         // Triggered whenever `step` changes
         const getNumHouseholds = async () => {
             try {
-                const response = await fetch(`${API_URL}/get-num-households`); // Your API endpoint
-                const data = await response.json();
-                setNumHouseholds(data.num_households); 
+                const response = await client.get('/get-num-households');
+                setNumHouseholds(response.data.num_households);
             } catch (error) {
-                console.error("Error fetching households:", error);
+                console.error('Error fetching shared:', error);
             }
+            // try {
+            //     const response = await fetch(`${API_URL}/get-num-households`); // Your API endpoint
+            //     const data = await response.json();
+            //     setNumHouseholds(data.num_households);
+            // } catch (error) {
+            //     console.error("Error fetching households:", error);
+            // }
         };
         const getHouseholdStats = async () => {
             try {
-                const response = await fetch(`${API_URL}/get-household-stats`); // Your API endpoint
-                const data = await response.json();
-                setAvgIncome(data.avg_income)
-                setAvgVehicles(data.avg_vehicles)
+                const response = await client.get('/get-households-stats');
+                setAvgIncome(response.data.avg_income);
+                setAvgVehicles(response.data.avg_vehicles);
             } catch (error) {
-                console.error("Error fetching households:", error);
+                console.error('Error fetching shared:', error);
             }
+            // try {
+            //     const response = await fetch(`${API_URL}/get-household-stats`); // Your API endpoint
+            //     const data = await response.json();
+            //     setAvgIncome(data.avg_income)
+            //     setAvgVehicles(data.avg_vehicles)
+            // } catch (error) {
+            //     console.error("Error fetching households:", error);
+            // }
         };
         getHouseholdStats(); //technically households and household stats can just be run once on initialization 
         getNumHouseholds();
