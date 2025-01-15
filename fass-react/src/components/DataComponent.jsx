@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { StoreContext } from '../App';
-const API_URL = import.meta.env.VITE_API_URL || "__API__URL__";
+import { client } from "../shared/client.js";
 
 const DataComponent = () => {
     const {stepNumber, stores} = useContext(StoreContext)
@@ -12,13 +12,21 @@ const DataComponent = () => {
     useEffect(() => {
         const getNumStores = async () => {
             try {
-                const response = await fetch(`${API_URL}/get-num-stores`); // Your API endpoint
-                const data = await response.json();
-                setNumSPM(data.numSPM);
-                setNumNonSPM(data.numNonSPM); 
+                const response = await client.get('/get-num-stores');
+                setNumSPM(response.data.numSPM);
+                setNumNonSPM(response.data.numNonSPM);
             } catch (error) {
-                console.error("Error fetching stores:", error);
+                console.error('Error fetching shared:', error);
             }
+            // try {
+            //     const response = await fetch(`${API_URL}/get-num-stores`); // Your API endpoint
+            //     const data = await response.json();
+            //     setNumSPM(data.numSPM);
+            //     setNumNonSPM(data.numNonSPM);
+            // } catch (error) {
+            //     console.error("Error fetching shared:", error);
+            // }
+
         };
 
             getNumStores();

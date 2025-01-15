@@ -10,10 +10,10 @@ import Legend from './components/LegendComponent';
 import DataComponent from './components/DataComponent';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css'
+import { client} from "./shared/client.js";
 
 export const StoreContext = createContext();
 export const HouseholdContext = createContext();
-const API_URL = import.meta.env.VITE_API_URL || "__API__URL__";
 
 const App = () => {
   const [stepNumber, setStepNumber] = useState(0);
@@ -25,36 +25,58 @@ const App = () => {
   };
 
   useEffect(() => {
-    console.log("get step number call")
-    fetch(`${API_URL}/get-step-number`)
-    .then(response => response.json()) // Get the JSON response
-    .then(data => {
-        console.log(data); // Log the data to the console
-        setStepNumber(data["step_number"])
-    })
-    .catch(error => console.error('Error fetching step number:', error));
+    console.log("get step number call");
+    client.get('/get-step-number')
+        .then(response => {
+            console.log(response.data);
+            setStepNumber(response.data["step_number"]);
+        })
+        .catch(error => {
+            console.error('Error fetching step number:', error);
+        });
+    // fetch(`${API_URL}/get-step-number`)
+    // .then(response => response.json()) // Get the JSON response
+    // .then(data => {
+    //     console.log(data); // Log the data to the console
+    //     setStepNumber(data["step_number"])
+    // })
+    // .catch(error => console.error('Error fetching step number:', error));
   }, [])
 
   const [stores, setStores] = useState([]);
   useEffect(() => {
-    console.log("stores call")
-    fetch(`${API_URL}/stores`)
-    .then(response => response.json())
-    .then(data => {
-        setStores(data.stores_json);  // Set the list of stores from the API response
-    })
-    .catch(error => console.error('Error fetching stores:', error));
+    console.log("shared call");
+    client.get('/stores')
+      .then(response => {
+          setStores(response.data.stores_json)
+      })
+      .catch(error => {
+          console.error('Error fetching shared:', error);
+      });
+    // fetch(`${API_URL}/shared`)
+    // .then(response => response.json())
+    // .then(data => {
+    //     setStores(data.stores_json);  // Set the list of shared from the API response
+    // })
+    // .catch(error => console.error('Error fetching shared:', error));
   }, []);
 
   const [households, setHouseholds] = useState([]);
   useEffect(() => {
-    console.log("households call")
-    fetch(`${API_URL}/households`)
-    .then(response => response.json())
-    .then(data => {
-        setHouseholds(data.households_json);  // Set the list of stores from the API response
-    })
-    .catch(error => console.error('Error fetching households:', error));
+    console.log("households call");
+    client.get('/households')
+      .then(response => {
+          setHouseholds(response.data.households_json);
+      })
+      .catch(error => {
+          console.error('Error fetching households:', error);
+      });
+    // fetch(`${API_URL}/households`)
+    // .then(response => response.json())
+    // .then(data => {
+    //     setHouseholds(data.households_json);  // Set the list of shared from the API response
+    // })
+    // .catch(error => console.error('Error fetching households:', error));
   }, [stepNumber]);
 
   useEffect(() => {
