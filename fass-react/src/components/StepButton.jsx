@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Spinner } from 'react-bootstrap';
 import { client} from "../shared/client.js";
 
 // const API_URL = import.meta.env.VITE_API_URL || "__API__URL__";
@@ -8,8 +8,9 @@ const headers = {
   };
 
 const StepButton = ({updateStepNumber}) => {
-
+    const [loading, setLoading] = useState(false);
     const step = () => {
+      setLoading(true)
         client.put("/step", {}, {
             headers: headers
         })
@@ -19,9 +20,11 @@ const StepButton = ({updateStepNumber}) => {
             }
             console.log(response.data);
             updateStepNumber(response.data["step_number"]);
+            setLoading(false)
         })
         .catch(error => {
             console.error('Error with step function:', error);
+            setLoading(false)
         });
         // fetch(`${API_URL}/step`, {
         //     method: 'PUT',
@@ -44,8 +47,14 @@ const StepButton = ({updateStepNumber}) => {
 
     return (
       <>
-       <Button variant="primary" onClick={step}>
-        Step
+       <Button variant="primary" onClick={step} disabled={loading}>
+       {loading ? (
+        <>
+          <Spinner animation="border" size="sm" /> Loading...
+        </>
+      ) : (
+        "Run Step"
+      )}
         </Button>
       </>
     );
