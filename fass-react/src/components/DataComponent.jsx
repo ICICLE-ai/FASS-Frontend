@@ -50,7 +50,7 @@ const DataComponent = () => {
         };
         const getHouseholdStats = async () => {
             try {
-                const response = await client.get('/get-households-stats');
+                const response = await client.get('/get-household-stats');
                 setAvgIncome(response.data.avg_income);
                 setAvgVehicles(response.data.avg_vehicles);
             } catch (error) {
