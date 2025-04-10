@@ -61,6 +61,8 @@ jobs:
         with:
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get_tag_name.outputs.tag_name }}
+          context: ./fass-react
+          file: ./fass-react/Dockerfile
 
   deploy-images-dev:
     runs-on: ubuntu-latest
