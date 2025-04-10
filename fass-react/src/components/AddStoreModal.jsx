@@ -29,7 +29,7 @@ const AddStoreModal = ({ show, handleClose }) => {
     e.preventDefault();
 
     try {
-      const response = await client.post('/add-store', {data: {body: JSON.stringify(formData)}});
+      const response = await client.post('/add-store', formData);
       if (response.status !== 200) {
         console.log('Error:', response.statusText);
       }
