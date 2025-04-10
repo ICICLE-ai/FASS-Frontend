@@ -14,7 +14,7 @@ const RemoveStoreModal = ({show, handleClose}) => {
     // Handle form submission to the backend using fetch
     const handleSubmit = async (e) => {
         e.preventDefault();
-        client.delete('/remove-store', {data: {body: JSON.stringify(selectedStore)}, headers: headers})
+        client.delete('/remove-store', {data: JSON.stringify(selectedStore), headers: headers})
             .then(response => {
                 if (response.status !== 200) {
                     throw new Error('Network response was not ok');
