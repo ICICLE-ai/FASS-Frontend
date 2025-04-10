@@ -35,7 +35,7 @@ const ResetButton = () => {
 
     return (
         <>
-        <Button onClick={reset}>Reset All</Button>
+        <Button onClick={reset}>Reset Stores</Button>
         </>
     )
 }

@@ -108,6 +108,7 @@ const App = () => {
                     <AddStoreButton />
                     <RemoveStoreButton />
                     <StepButton updateStepNumber={updateStepNumber} />
+                    <ResetButton/>
                     </div>
                 </div>
 
