@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { StoreContext } from '../App';
-const apiUrl = process.env.REACT_APP_API_URL;
+import { client } from "../shared/client.js";
 
 const AddStoreModal = ({ show, handleClose }) => {
     const {stores, setStores} = useContext(StoreContext)  
@@ -29,38 +29,60 @@ const AddStoreModal = ({ show, handleClose }) => {
     e.preventDefault();
 
     try {
-        const response = await fetch(`${apiUrl}/add-store`, {
-          method: 'POST', // placeholder API call
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        });
-      
-        if (response.ok) {
-          const responseData = await response.json();
-          console.log('Success:', responseData);
-    
-          // Fetch updated list of stores
-          try {
-            const storesResponse = await fetch(`${apiUrl}/stores`);
-            if (storesResponse.ok) {
-              const storesData = await storesResponse.json();
-              setStores(storesData.stores_json); // Set the list of stores from the API response
-            } else {
-              console.error('Error fetching stores:', storesResponse.statusText);
-            }
-          } catch (error) {
-            console.error('Error fetching stores:', error);
-          }
-      
-          handleClose(); // Close modal on successful submission
-        } else {
-          console.error('Error:', response.statusText);
+      const response = await client.post('/add-store', formData);
+      if (response.status !== 200) {
+        console.log('Error:', response.statusText);
+      }
+      console.log('Success:', response.data);
+
+
+      try {
+        const response = await client.get('/stores');
+        if (response.status !== 200) {
+          console.error('Error fetching shared:', response.statusText);
         }
+        console.log('Success:', response.data);
+        setStores(response.data.stores_json)
       } catch (error) {
-        console.error('Error adding store:', error);
-      }      
+        console.error('Error fetching shared:', error);
+      }
+      handleClose();
+
+    } catch (error) {
+      console.error('Error adding store:', error);
+    }
+
+      // const response = await fetch(`${API_URL}/add-store`, {
+      //   method: 'POST', // placeholder API call
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(formData),
+      // });
+      //   if (response.ok) {
+      //     const responseData = await response.json();
+      //     console.log('Success:', responseData);
+      //
+      //     // Fetch updated list of shared
+      //     try {
+      //       const storesResponse = await fetch(`${API_URL}/stores`);
+      //       if (storesResponse.ok) {
+      //         const storesData = await storesResponse.json();
+      //         setStores(storesData.stores_json); // Set the list of shared from the API response
+      //       } else {
+      //         console.error('Error fetching shared:', storesResponse.statusText);
+      //       }
+      //     } catch (error) {
+      //       console.error('Error fetching shared:', error);
+      //     }
+      //
+      //     handleClose(); // Close modal on successful submission
+      //   } else {
+      //     console.error('Error:', response.statusText);
+      //   }
+      // } catch (error) {
+      //   console.error('Error adding store:', error);
+      // }
   };
 
 

@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { StoreContext } from '../App';
-const apiUrl = process.env.REACT_APP_API_URL;
+import { client } from "../shared/client.js";
 
 const DataComponent = () => {
     const {stepNumber, stores} = useContext(StoreContext)
@@ -12,13 +12,21 @@ const DataComponent = () => {
     useEffect(() => {
         const getNumStores = async () => {
             try {
-                const response = await fetch(`${apiUrl}/get-num-stores`); // Your API endpoint
-                const data = await response.json();
-                setNumSPM(data.numSPM);
-                setNumNonSPM(data.numNonSPM); 
+                const response = await client.get('/get-num-stores');
+                setNumSPM(response.data.numSPM);
+                setNumNonSPM(response.data.numNonSPM);
             } catch (error) {
-                console.error("Error fetching stores:", error);
+                console.error('Error fetching shared:', error);
             }
+            // try {
+            //     const response = await fetch(`${API_URL}/get-num-stores`); // Your API endpoint
+            //     const data = await response.json();
+            //     setNumSPM(data.numSPM);
+            //     setNumNonSPM(data.numNonSPM);
+            // } catch (error) {
+            //     console.error("Error fetching shared:", error);
+            // }
+
         };
 
             getNumStores();
@@ -27,22 +35,35 @@ const DataComponent = () => {
         // Triggered whenever `step` changes
         const getNumHouseholds = async () => {
             try {
-                const response = await fetch(`${apiUrl}/get-num-households`); // Your API endpoint
-                const data = await response.json();
-                setNumHouseholds(data.num_households); 
+                const response = await client.get('/get-num-households');
+                setNumHouseholds(response.data.num_households);
             } catch (error) {
-                console.error("Error fetching households:", error);
+                console.error('Error fetching shared:', error);
             }
+            // try {
+            //     const response = await fetch(`${API_URL}/get-num-households`); // Your API endpoint
+            //     const data = await response.json();
+            //     setNumHouseholds(data.num_households);
+            // } catch (error) {
+            //     console.error("Error fetching households:", error);
+            // }
         };
         const getHouseholdStats = async () => {
             try {
-                const response = await fetch(`${apiUrl}/get-household-stats`); // Your API endpoint
-                const data = await response.json();
-                setAvgIncome(data.avg_income)
-                setAvgVehicles(data.avg_vehicles)
+                const response = await client.get('/get-household-stats');
+                setAvgIncome(response.data.avg_income);
+                setAvgVehicles(response.data.avg_vehicles);
             } catch (error) {
-                console.error("Error fetching households:", error);
+                console.error('Error fetching shared:', error);
             }
+            // try {
+            //     const response = await fetch(`${API_URL}/get-household-stats`); // Your API endpoint
+            //     const data = await response.json();
+            //     setAvgIncome(data.avg_income)
+            //     setAvgVehicles(data.avg_vehicles)
+            // } catch (error) {
+            //     console.error("Error fetching households:", error);
+            // }
         };
         getHouseholdStats(); //technically households and household stats can just be run once on initialization 
         getNumHouseholds();

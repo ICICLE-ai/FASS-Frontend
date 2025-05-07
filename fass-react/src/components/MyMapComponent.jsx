@@ -1,15 +1,15 @@
 // Import necessary modules
-import React, { useState, useEffect, useContext } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polygon } from 'react-leaflet';
+import React, {useState, useEffect, useContext} from 'react';
+import {MapContainer, TileLayer, Marker, Popup, Polygon} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import proj4 from 'proj4';
 import 'proj4leaflet';
-import { StoreContext } from '../App';
-const apiUrl = process.env.REACT_APP_API_URL;
+import {StoreContext} from '../App';
+import {client} from '../shared/client.js'
 
-const MyMapComponent = ({ reloadPopups }) => {
+const MyMapComponent = ({reloadPopups}) => {
     const [households, setHouseholds] = useState([]);
-    const {stores,setStores} = useContext(StoreContext);
+    const {stores, setStores} = useContext(StoreContext);
     const [popupReloadKey, setPopupReloadKey] = useState(0);
 
     // Update key whenever `reloadPopups` changes
@@ -17,22 +17,29 @@ const MyMapComponent = ({ reloadPopups }) => {
         setPopupReloadKey(prevKey => prevKey + 1);
         console.log("reload in map success")
     }, [reloadPopups]);
-    
+
 
     useEffect(() => {
         // Function to fetch households data
         const fetchHouseholds = async () => {
             try {
-                const response = await fetch(`${apiUrl}/households`);
-                const data = await response.json();
-                setHouseholds(data.households_json); // Assume data is an array of household objects
+                const response = await client.get('/households');
+                setHouseholds(response.data.households_json);
             } catch (error) {
-                console.error("Error fetching households data:", error);
+                console.error('Error fetching households:', error);
             }
+
+            // try {
+            //     const response = await fetch(`${API_URL}/households`);
+            //     const data = await response.json();
+            //     setHouseholds(data.households_json); // Assume data is an array of household objects
+            // } catch (error) {
+            //     console.error("Error fetching households data:", error);
+            // }
         };
 
-    fetchHouseholds();
-    //fetchStores();
+        fetchHouseholds();
+        //fetchStores();
     }, [stores]); // Empty dependency array means this effect runs only once when the component mounts\
 
     // Define the source and destination projections
@@ -45,36 +52,38 @@ const MyMapComponent = ({ reloadPopups }) => {
     proj4.defs(EPSG4326, "+proj=longlat +datum=WGS84 +no_defs");
 
     const projectToEPSG4326 = (coordinates) => {
-    return coordinates.map(coord => {
-        // Convert each coordinate from EPSG:3857 to EPSG:4326
-        const [x, y] = coord;
-        return proj4(EPSG3857, EPSG4326, [x, y]).reverse();
-    });
+        return coordinates.map(coord => {
+            // Convert each coordinate from EPSG:3857 to EPSG:4326
+            const [x, y] = coord;
+            return proj4(EPSG3857, EPSG4326, [x, y]).reverse();
+        });
     };
 
     // Helper function to parse WKT format
     const parsePolygon = (polygonString) => {
         // Expected format: "POLYGON ((lng lat, lng lat, ...))"
         return polygonString
-        .replace("POLYGON ((", "")
-        .replace("))", "")
-        .split(", ")
-        .map(coord => coord.split(" ").map(Number)); // Reverse to [lat, lng]
+            .replace("POLYGON ((", "")
+            .replace("))", "")
+            .split(", ")
+            .map(coord => coord.split(" ").map(Number)); // Reverse to [lat, lng]
     };
 
     let num_households = households.length
     return (
-        <div style={{ height: '75vh', width: '75vh' }}> {/* Set desired height and width */}
-            <MapContainer center={[39.95073348838346, -82.99890139247076]} zoom={13} scrollWheelZoom={false} style={{ height: '100%', width: '100%' }}>
+        <div style={{height: '75vh', width: '75vh'}}> {/* Set desired height and width */}
+            <MapContainer center={[39.95073348838346, -82.99890139247076]} zoom={13} scrollWheelZoom={false}
+                          style={{height: '100%', width: '100%'}}>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                {households.map((household,index) => (
-                <Polygon key={index} positions={projectToEPSG4326(parsePolygon(household["Geometry"]))} pathOptions = {{ color: household["Color"], weight: 2 }}>
-                    <Popup>
-                        <table>
-                            <tbody>
+                {households.map((household, index) => (
+                    <Polygon key={index} positions={projectToEPSG4326(parsePolygon(household["Geometry"]))}
+                             pathOptions={{color: household["Color"], weight: 2}}>
+                        <Popup>
+                            <table>
+                                <tbody>
                                 {[
                                     "Income",
                                     "Household Size",
@@ -91,21 +100,21 @@ const MyMapComponent = ({ reloadPopups }) => {
                                     "Driving time",
                                     "MFAI Score"
                                 ].map((label) => (
-                                    <tr key = {index}>
+                                    <tr key={index}>
                                         <td>{label}: {household[label]}</td>
                                     </tr>
                                 ))}
-                            </tbody>
-                        </table>
-                    </Popup>
-                </Polygon>
-            ))}
-            {(stores.map((store, index) => (
-                
-                <Polygon key={index+num_households+1} positions={projectToEPSG4326(parsePolygon(store[1]))}>
-                    <Popup>
-                        <table>
-                            <tbody>
+                                </tbody>
+                            </table>
+                        </Popup>
+                    </Polygon>
+                ))}
+                {(stores.map((store, index) => (
+
+                    <Polygon key={index + num_households + 1} positions={projectToEPSG4326(parsePolygon(store[1]))}>
+                        <Popup>
+                            <table>
+                                <tbody>
                                 <tr>
                                     <td>
                                         Name: {store[2]}
@@ -116,11 +125,11 @@ const MyMapComponent = ({ reloadPopups }) => {
                                         Type: {store[0]}
                                     </td>
                                 </tr>
-                            </tbody>
-                        </table>
-                    </Popup>
-                </Polygon>
-            )))}
+                                </tbody>
+                            </table>
+                        </Popup>
+                    </Polygon>
+                )))}
 
             </MapContainer>
         </div>
