@@ -40,12 +40,20 @@ export function initializeMap(mapId, households, stores) {
 
     // Helper function to parse WKT format
     const parsePolygon = (polygonString) => {
-        // Expected format: "POLYGON ((lng lat, lng lat, ...))"
-        return polygonString
-            .replace("POLYGON ((", "")
-            .replace("))", "")
-            .split(", ")
-            .map(coord => coord.split(" ").map(Number)); // Convert to [lat, lng]
+        // More robustly finds coordinates within "POLYGON ((...))"
+        const coordsStr = polygonString.match(/\(\((.*)\)\)/);
+        if (!coordsStr || !coordsStr[1]) return []; // Return empty array if no match
+        return coordsStr[1].split(",").map(pair =>
+            pair.trim().split(/\s+/).map(Number)
+        );
+    };
+
+    // Helper function to parse WKT point format
+    const parsePoint = (pointString) => {
+        // More robustly finds coordinates within "POINT (...)"
+        const coordsStr = pointString.match(/\((.*)\)/);
+        if (!coordsStr || !coordsStr[1]) return []; // Return empty array if no match
+        return coordsStr[1].trim().split(/\s+/).map(Number);
     };
 
     // Initialize a layer group for households at the top level so it can be modified later
@@ -56,39 +64,38 @@ export function initializeMap(mapId, households, stores) {
         householdLayer.clearLayers(); // Clear the existing households from the layer
 
         newHouseholds.forEach((household, index) => {
-            const positions = projectToEPSG4326(parsePolygon(household["Geometry"]));
-
-            const polygon = L.polygon(positions, {
-                color: household["Color"],
+            const position = projectToEPSG4326([parsePoint(household["Geometry"])]);
+            const point = L.circleMarker(position[0], {
+                color: household["Color"] || 'blue',
                 weight: 3
             });
 
-            const table = document.createElement("table");
-            const tbody = document.createElement("tbody");
+            // const table = document.createElement("table");
+            // const tbody = document.createElement("tbody");
+// 
+            // const labels = [
+            //     "Income",
+            //     "Household Size",
+            //     "Vehicles",
+            //     "Number of Workers",
+            //     "Stores within 1 Mile",
+            //     "Closest Store (Miles)",
+            //     "Transit time",
+            //     "Food Access Score"
+            // ];
+// 
+            // labels.forEach(label => {
+            //     const tr = document.createElement("tr");
+            //     const td = document.createElement("td");
+            //     td.textContent = `${label}: ${household[label] || "N/A"}`;
+            //     tr.appendChild(td);
+            //     tbody.appendChild(tr);
+            // });
+// 
+            // table.appendChild(tbody);
+            // point.bindPopup(table);
 
-            const labels = [
-                "Income",
-                "Household Size",
-                "Vehicles",
-                "Number of Workers",
-                "Stores within 1 Mile",
-                "Closest Store (Miles)",
-                "Transit time",
-                "Food Access Score"
-            ];
-
-            labels.forEach(label => {
-                const tr = document.createElement("tr");
-                const td = document.createElement("td");
-                td.textContent = `${label}: ${household[label] || "N/A"}`;
-                tr.appendChild(td);
-                tbody.appendChild(tr);
-            });
-
-            table.appendChild(tbody);
-            polygon.bindPopup(table);
-
-            householdLayer.addLayer(polygon);
+            householdLayer.addLayer(point);
         });
 
         newStores.forEach((store, index) => {
