@@ -81,9 +81,9 @@ const App = () => {
 
   useEffect(() => {
     if (!mapRef.current) {
-      const { map, render_households } = initializeMap('map', households, stores);
+      const { map, renderAll } = initializeMap('map', households, stores);
       mapRef.current = map;
-      renderHouseholdsRef.current = render_households;
+      renderHouseholdsRef.current = renderAll;
     }
   }, []);
 

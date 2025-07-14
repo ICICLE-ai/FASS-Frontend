@@ -59,78 +59,198 @@ export function initializeMap(mapId, households, stores) {
     // Initialize a layer group for households at the top level so it can be modified later
     const householdLayer = L.layerGroup().addTo(map);
 
-    // Function to render households
-    function render_households(newHouseholds, newStores) {
-        householdLayer.clearLayers(); // Clear the existing households from the layer
+    //
+    // icons
+    //
 
-        newHouseholds.forEach((household, index) => {
-            const position = projectToEPSG4326([parsePoint(household["Geometry"])]);
-            const point = L.circleMarker(position[0], {
-                color: household["Color"] || 'blue',
-                weight: 3
-            });
+    const icons = {
+        convenience: getMapIcon('convenience-store.svg', 'transparent-shadow.svg'),
+        supermarket: getMapIcon('supermarket.svg', 'transparent-shadow.svg'),
+        dot: getMapIcon('dot.svg', 'shadow.svg'),
+        house: getMapIcon('house.svg', 'shadow.svg'),
+        green_house: getMapIcon('house-green.svg', 'shadow.svg'),
+        yellow_house: getMapIcon('house-yellow.svg', 'shadow.svg'),
+        red_house: getMapIcon('house-red.svg', 'shadow.svg')
+    };
 
-            // const table = document.createElement("table");
-            // const tbody = document.createElement("tbody");
-// 
-            // const labels = [
-            //     "Income",
-            //     "Household Size",
-            //     "Vehicles",
-            //     "Number of Workers",
-            //     "Stores within 1 Mile",
-            //     "Closest Store (Miles)",
-            //     "Transit time",
-            //     "Food Access Score"
-            // ];
-// 
-            // labels.forEach(label => {
-            //     const tr = document.createElement("tr");
-            //     const td = document.createElement("td");
-            //     td.textContent = `${label}: ${household[label] || "N/A"}`;
-            //     tr.appendChild(td);
-            //     tbody.appendChild(tr);
-            // });
-// 
-            // table.appendChild(tbody);
-            // point.bindPopup(table);
+    //
+    // icon rendering functions
+    //
 
-            householdLayer.addLayer(point);
-        });
-
-        newStores.forEach((store, index) => {
-            const positions = projectToEPSG4326(parsePolygon(store[1]));
-
-            const polygon = L.polygon(positions, {
-                color: "blue",
-                weight: 3
-            });
-
-            const table = document.createElement("table");
-            const tbody = document.createElement("tbody");
-
-            const tr1 = document.createElement("tr");
-            const td1 = document.createElement("td");
-            td1.textContent = `Name: ${store[2]}`;
-            tr1.appendChild(td1);
-            tbody.appendChild(tr1);
-
-            const tr2 = document.createElement("tr");
-            const td2 = document.createElement("td");
-            td2.textContent = `Type: ${store[0]}`;
-            tr2.appendChild(td2);
-            tbody.appendChild(tr2);
-
-            table.appendChild(tbody);
-            polygon.bindPopup(table);
-
-            householdLayer.addLayer(polygon);
+    function getMapIcon(iconUrl, shadowUrl) {
+        return L.icon({
+            iconUrl: '/markers/' + iconUrl,
+            shadowUrl: '/markers/' + shadowUrl,
+            iconSize:     [15, 15], // size of the icon
+            shadowSize:   [30, 30], // size of the shadow
+            iconAnchor:   [7.5, 7.5], // point of the icon which will correspond to marker's location
+            shadowAnchor: [12, 12],  // the same for the shadow
+            popupAnchor:  [0, -5] // point from which the popup should open relative to the iconAnchor
         });
     }
 
-    // Render the initial households
-    render_households(households,stores);
+    //
+    // store rendering functions
+    //
+
+    function getStoreIcon(store) {
+        switch (store) {
+            case 'convenience':
+                return icons.convenience;
+            case 'supermarket':
+                return icons.supermarket;
+            default:
+                return icons.dot;
+        }
+    }
+
+    function getStorePopup(store) {
+        const table = document.createElement("table");
+        const tbody = document.createElement("tbody");
+
+        // create first row
+        //
+        const tr1 = document.createElement("tr");
+        const td1 = document.createElement("td");
+        td1.textContent = `Name: ${store[2]}`;
+        tr1.appendChild(td1);
+        tbody.appendChild(tr1);
+
+        // create second row
+        //
+        const tr2 = document.createElement("tr");
+        const td2 = document.createElement("td");
+        td2.textContent = `Type: ${store[0]}`;
+        tr2.appendChild(td2);
+        tbody.appendChild(tr2);
+
+        table.appendChild(tbody);
+        return table;
+    }
+
+    function renderStore(store, layer) {
+        const array = parsePolygon(store[1]);
+        const point = array[0];
+        const position = proj4(EPSG3857, EPSG4326, point).reverse();
+        const icon = getStoreIcon(store[0]);
+
+        // add marker to layer
+        //
+        L.marker(position, {icon: icon}).addTo(layer).bindPopup(getStorePopup(store));
+    }
+
+    function renderStores(stores, layer, limit=1000) {
+        stores.forEach((store, index) => {
+            if (index < limit) {
+                renderStore(store, layer);
+            }
+        });
+    }
+
+    //
+    // store polygon rendering functions
+    //
+
+    function renderPolygonStore(store, layer) {
+        const positions = projectToEPSG4326(parsePolygon(store[1]));
+        const polygon = L.polygon(positions, {
+            color: "blue",
+            weight: 3
+        });
+
+        polygon.addTo(layer).bindPopup(getStorePopup(store));
+    }
+
+    function renderPolygonStores(stores, layer) {
+        stores.forEach((store, index) => {
+            if (index < limit) {
+                renderPolygonStore(store, layer);
+            }
+        });
+    }
+
+    //
+    // household rendering functions
+    //
+
+    function getHouseholdIcon(household) {
+        const score = household['Food Access Score'];
+        if (score < 50) {
+            return icons.red_house;
+        } else if (score < 75) {
+            return icons.yellow_house;
+        } else {
+            return icons.green_house;
+        }
+    }
+
+    function getHouseholdPopup(household) {
+        const table = document.createElement("table");
+        const tbody = document.createElement("tbody");
+
+        const labels = [
+            "Income",
+            "Household Size",
+            "Vehicles",
+            "Number of Workers",
+            "Stores within 1 Mile",
+            "Closest Store (Miles)",
+            "Transit time",
+            "Food Access Score"
+        ];
+
+        labels.forEach(label => {
+            const tr = document.createElement("tr");
+            const td = document.createElement("td");
+            const value = household? household[label] : "N/A";
+            td.textContent = `${label}: ${value}`;
+            tr.appendChild(td);
+            tbody.appendChild(tr);
+        });
+
+        table.appendChild(tbody);
+        return table;
+    }
+
+    function renderHousehold(household, layer) {
+        const position = projectToEPSG4326([parsePoint(household["Geometry"])]);
+        const point = L.circleMarker(position[0], {
+            color: household["Color"] || 'blue',
+            weight: 3
+        });
+        const icon = getHouseholdIcon(household);
+
+        // add marker to layer
+        //
+        L.marker(position[0], {icon: icon}).addTo(layer).bindPopup(getHouseholdPopup(household));
+    }
+
+    function renderHouseholds(households, layer, limit=1000) {
+        households.forEach((household, index) => {
+            if (index < limit) {
+                renderHousehold(household, layer);
+            }
+        });
+    }
+
+    //
+    // marker rendering function
+    //
+
+    function renderAll(newHouseholds, newStores) {
+        householdLayer.clearLayers(); // Clear the existing households from the layer
+
+        // render map items
+        //
+        renderStores(newStores, householdLayer);
+        // renderPolygonStores(newStores, householdLayer);
+        renderHouseholds(newHouseholds, householdLayer);
+    }
+
+    // Render the initial households and stores
+    //
+    renderAll(households, stores);
 
     // Return the map and the render_households function so it can be called externally if needed
-    return { map, render_households };
+    return { map, renderAll };
 }
