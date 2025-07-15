@@ -2,7 +2,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import proj4 from 'proj4';
 import 'proj4leaflet';
-import '../../../markercluster/leaflet.markercluster-src.js'
+import '../../markercluster/leaflet.markercluster-src.js'
 
 export function initializeMap(mapId, households, stores) {
 
