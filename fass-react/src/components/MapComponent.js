@@ -61,6 +61,9 @@ export function initializeMap(mapId, households, stores) {
     const householdLayer = L.layerGroup().addTo(map);
     const CLUSTER_STORES = false;
     const CLUSTER_HOUSEHOLDS = true;
+    const CLUSTER_OPTIONS = {
+        disableClusteringAtZoom: 17
+    };
 
     //
     // icons
@@ -246,7 +249,7 @@ export function initializeMap(mapId, households, stores) {
         // render households
         //
         if (CLUSTER_HOUSEHOLDS) {
-            let clusterLayer = L.markerClusterGroup();
+            let clusterLayer = L.markerClusterGroup(CLUSTER_OPTIONS);
             renderHouseholds(newHouseholds, clusterLayer);
             householdLayer.addLayer(clusterLayer);
         } else {
@@ -256,7 +259,7 @@ export function initializeMap(mapId, households, stores) {
         // render stores
         //
         if (CLUSTER_STORES) {
-            let clusterLayer = L.markerClusterGroup();
+            let clusterLayer = L.markerClusterGroup(CLUSTER_OPTIONS);
             renderStores(newStores, clusterLayer);
             householdLayer.addLayer(clusterLayer);
         } else {
