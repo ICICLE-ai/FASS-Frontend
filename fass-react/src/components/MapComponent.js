@@ -2,6 +2,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import proj4 from 'proj4';
 import 'proj4leaflet';
+import '../../../markercluster/leaflet.markercluster-src.js'
 
 export function initializeMap(mapId, households, stores) {
 
@@ -58,6 +59,8 @@ export function initializeMap(mapId, households, stores) {
 
     // Initialize a layer group for households at the top level so it can be modified later
     const householdLayer = L.layerGroup().addTo(map);
+    const CLUSTER_STORES = false;
+    const CLUSTER_HOUSEHOLDS = true;
 
     //
     // icons
@@ -139,9 +142,9 @@ export function initializeMap(mapId, households, stores) {
         L.marker(position, {icon: icon}).addTo(layer).bindPopup(getStorePopup(store));
     }
 
-    function renderStores(stores, layer, limit=1000) {
+    function renderStores(stores, layer, limit=0) {
         stores.forEach((store, index) => {
-            if (index < limit) {
+            if (!limit || index < limit) {
                 renderStore(store, layer);
             }
         });
@@ -225,9 +228,9 @@ export function initializeMap(mapId, households, stores) {
         L.marker(position[0], {icon: icon}).addTo(layer).bindPopup(getHouseholdPopup(household));
     }
 
-    function renderHouseholds(households, layer, limit=1000) {
+    function renderHouseholds(households, layer, limit=0) {
         households.forEach((household, index) => {
-            if (index < limit) {
+            if (!limit || index < limit) {
                 renderHousehold(household, layer);
             }
         });
@@ -240,11 +243,25 @@ export function initializeMap(mapId, households, stores) {
     function renderAll(newHouseholds, newStores) {
         householdLayer.clearLayers(); // Clear the existing households from the layer
 
-        // render map items
+        // render households
         //
-        renderStores(newStores, householdLayer);
-        // renderPolygonStores(newStores, householdLayer);
-        renderHouseholds(newHouseholds, householdLayer);
+        if (CLUSTER_HOUSEHOLDS) {
+            let clusterLayer = L.markerClusterGroup();
+            renderHouseholds(newHouseholds, clusterLayer);
+            householdLayer.addLayer(clusterLayer);
+        } else {
+            renderHouseholds(newStores, householdLayer);
+        }
+
+        // render stores
+        //
+        if (CLUSTER_STORES) {
+            let clusterLayer = L.markerClusterGroup();
+            renderStores(newStores, clusterLayer);
+            householdLayer.addLayer(clusterLayer);
+        } else {
+            renderStores(newStores, householdLayer);
+        }
     }
 
     // Render the initial households and stores
