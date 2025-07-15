@@ -62,7 +62,7 @@ export function initializeMap(mapId, households, stores) {
     const CLUSTER_STORES = false;
     const CLUSTER_HOUSEHOLDS = true;
     const CLUSTER_OPTIONS = {
-        disableClusteringAtZoom: 17
+        disableClusteringAtZoom: 16
     };
 
     //
