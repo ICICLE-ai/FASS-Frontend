@@ -294,7 +294,7 @@ export function initializeMap(mapId, households, stores) {
             // let clusterLayer = L.markerClusterGroup(CLUSTER_OPTIONS);
 
             let clusterLayer = householdsClusterGroup;
-            clusterLayer.disableClusteringAtZoom = CLUSTER_OPTIONS.disableClusteringAtZoom;
+            clusterLayer.options.disableClusteringAtZoom = CLUSTER_OPTIONS.disableClusteringAtZoom;
             renderHouseholds(newHouseholds, clusterLayer);
             householdLayer.addLayer(clusterLayer);
         } else {
