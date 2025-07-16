@@ -62,7 +62,7 @@ export function initializeMap(mapId, households, stores) {
     const CLUSTER_STORES = false;
     const CLUSTER_HOUSEHOLDS = true;
     const CLUSTER_OPTIONS = {
-        disableClusteringAtZoom: 16
+        disableClusteringAtZoom: 17
     };
 
     //
@@ -220,15 +220,14 @@ export function initializeMap(mapId, households, stores) {
 
     function renderHousehold(household, layer) {
         const position = projectToEPSG4326([parsePoint(household["Geometry"])]);
-        const point = L.circleMarker(position[0], {
-            color: household["Color"] || 'blue',
-            weight: 3
-        });
         const icon = getHouseholdIcon(household);
 
         // add marker to layer
         //
-        L.marker(position[0], {icon: icon}).addTo(layer).bindPopup(getHouseholdPopup(household));
+        L.marker(position[0], {
+            icon: icon,
+            score: parseInt(household['Food Access Score'])
+        }).addTo(layer).bindPopup(getHouseholdPopup(household));
     }
 
     function renderHouseholds(households, layer, limit=0) {
@@ -240,6 +239,49 @@ export function initializeMap(mapId, households, stores) {
     }
 
     //
+    // clustering methods
+    //
+
+    const householdsClusterGroup = L.markerClusterGroup({
+
+        iconCreateFunction: function (cluster) {
+            const markers = cluster.getAllChildMarkers();
+            const values = markers.map(m => m.options.score);
+            let mean = values.reduce((sum, v) => sum + v, 0) / values.length;
+            if (mean > 100) {
+                mean = 100;
+            }
+            let value = (mean - 50) / 50;
+
+            // Map mean to hue (green for low, red for high)
+            // const hue = mean > 50? 0 + ((mean - 50) / 50) * 120 : 0;
+            // const color = `hsl(${Math.max(0, Math.min(120, hue))}, 50%, 50%)`;
+
+            let icon = "house-red.svg";
+            let brightness = 1 + value * 0.75;
+
+            /*
+            if (mean > 75) {
+                icon = "house-green.svg";
+            } else if (mean > 50) {
+                icon = "house-yellow.svg";
+            } else {
+                icon = "house-red.svg";
+            }
+            */
+
+            return new L.DivIcon({
+                html: `<div class="household">
+                    <img class="icon" src="markers/${icon}" style="filter:hue-rotate(${value * 80}deg) brightness(${brightness})">
+                    <span class="label">${mean.toFixed(0)}</span>
+                </div>`,
+                className: '',
+                iconSize: new L.Point(50, 50)
+            });
+        }
+    });
+
+    //
     // marker rendering function
     //
 
@@ -249,7 +291,10 @@ export function initializeMap(mapId, households, stores) {
         // render households
         //
         if (CLUSTER_HOUSEHOLDS) {
-            let clusterLayer = L.markerClusterGroup(CLUSTER_OPTIONS);
+            // let clusterLayer = L.markerClusterGroup(CLUSTER_OPTIONS);
+
+            let clusterLayer = householdsClusterGroup;
+            clusterLayer.disableClusteringAtZoom = CLUSTER_OPTIONS.disableClusteringAtZoom;
             renderHouseholds(newHouseholds, clusterLayer);
             householdLayer.addLayer(clusterLayer);
         } else {
