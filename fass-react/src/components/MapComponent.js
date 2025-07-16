@@ -248,10 +248,15 @@ export function initializeMap(mapId, households, stores) {
             const markers = cluster.getAllChildMarkers();
             const values = markers.map(m => m.options.score);
             let mean = values.reduce((sum, v) => sum + v, 0) / values.length;
+
+            if (mean == undefined) {
+                mean = 0;
+            }
             if (mean > 100) {
                 mean = 100;
             }
             let value = (mean - 50) / 50;
+            let count = markers.length;
 
             // Map mean to hue (green for low, red for high)
             // const hue = mean > 50? 0 + ((mean - 50) / 50) * 120 : 0;
@@ -273,7 +278,7 @@ export function initializeMap(mapId, households, stores) {
             return new L.DivIcon({
                 html: `<div class="household">
                     <img class="icon" src="markers/${icon}" style="filter:hue-rotate(${value * 80}deg) brightness(${brightness})">
-                    <span class="label">${mean.toFixed(0)}</span>
+                    <span class="label">${count.toFixed(0)}</span>
                 </div>`,
                 className: '',
                 iconSize: new L.Point(50, 50)
