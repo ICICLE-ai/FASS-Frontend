@@ -43,6 +43,14 @@ const App = () => {
     // .catch(error => console.error('Error fetching step number:', error));
   }, [])
 
+  function showLoadingSpinner() {
+    document.getElementById('loading').style.visibility = 'visible';
+  }
+
+  function hideLoadingSpinner() {
+    document.getElementById('loading').style.visibility = 'hidden';
+  }
+
   const [stores, setStores] = useState([]);
   useEffect(() => {
 
@@ -74,10 +82,12 @@ const App = () => {
     // make a request for stores, if one is not currently in progress
     //
     if (!window.households_request) {
+      showLoadingSpinner();
       window.households_request = client.get('/households')
         .then(response => {
             window.households_request = null;
             setHouseholds(response.data.households_json);
+            hideLoadingSpinner();
         })
         .catch(error => {
             console.error('Error fetching households:', error);
