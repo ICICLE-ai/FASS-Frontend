@@ -11,8 +11,11 @@
 	z-index: 10000;
 
 	.spinner {
-		width: 150px;
-		height: 150px;
+		width: 200px;
+		height: 200px;
 		margin: auto;
+		padding: 50px;
+		border-radius: 10px;
+		background: white;
 	}
 }
