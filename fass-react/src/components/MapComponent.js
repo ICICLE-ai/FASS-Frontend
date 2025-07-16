@@ -64,6 +64,7 @@ export function initializeMap(mapId, households, stores) {
     const CLUSTER_OPTIONS = {
         disableClusteringAtZoom: 17,
         spiderfyOnMaxZoom: false,
+        animate: true
     };
 
     //

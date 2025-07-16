@@ -18,7 +18,6 @@ const MyMapComponent = ({reloadPopups}) => {
         console.log("reload in map success")
     }, [reloadPopups]);
 
-
     /*
     useEffect(() => {
         // Function to fetch households data
