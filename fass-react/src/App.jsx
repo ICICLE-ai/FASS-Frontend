@@ -45,14 +45,20 @@ const App = () => {
 
   const [stores, setStores] = useState([]);
   useEffect(() => {
-    console.log("shared call");
-    client.get('/stores')
-      .then(response => {
-          setStores(response.data.stores_json)
-      })
-      .catch(error => {
-          console.error('Error fetching shared:', error);
-      });
+
+    // make a request for stores, if one is not currently in progress
+    //
+    if (!window.stores_request) {
+      window.stores_request = client.get('/stores')
+        .then(response => {
+            window.stores_request = null;
+            setStores(response.data.stores_json)
+        })
+        .catch(error => {
+            console.error('Error fetching shared:', error);
+        });
+    }
+
     // fetch(`${API_URL}/shared`)
     // .then(response => response.json())
     // .then(data => {
@@ -62,15 +68,22 @@ const App = () => {
   }, []);
 
   const [households, setHouseholds] = useState([]);
+
   useEffect(() => {
-    console.log("households call");
-    client.get('/households')
-      .then(response => {
-          setHouseholds(response.data.households_json);
-      })
-      .catch(error => {
-          console.error('Error fetching households:', error);
-      });
+
+    // make a request for stores, if one is not currently in progress
+    //
+    if (!window.households_request) {
+      window.households_request = client.get('/households')
+        .then(response => {
+            window.households_request = null;
+            setHouseholds(response.data.households_json);
+        })
+        .catch(error => {
+            console.error('Error fetching households:', error);
+        });
+    }
+
     // fetch(`${API_URL}/households`)
     // .then(response => response.json())
     // .then(data => {

@@ -299,10 +299,8 @@ export function initializeMap(mapId, households, stores) {
         // render households
         //
         if (CLUSTER_HOUSEHOLDS) {
-            // let clusterLayer = L.markerClusterGroup(CLUSTER_OPTIONS);
-            let clusterLayer = householdsClusterGroup;
-            renderHouseholds(newHouseholds, clusterLayer);
-            householdLayer.addLayer(clusterLayer);
+            renderHouseholds(newHouseholds, householdsClusterGroup);
+            householdLayer.addLayer(householdsClusterGroup);
         } else {
             renderHouseholds(newStores, householdLayer);
         }
@@ -320,7 +318,7 @@ export function initializeMap(mapId, households, stores) {
 
     // Render the initial households and stores
     //
-    renderAll(households, stores);
+    // renderAll(households, stores);
 
     // Return the map and the render_households function so it can be called externally if needed
     return { map, renderAll };

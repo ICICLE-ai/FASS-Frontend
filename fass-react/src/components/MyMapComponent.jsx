@@ -19,6 +19,7 @@ const MyMapComponent = ({reloadPopups}) => {
     }, [reloadPopups]);
 
 
+    /*
     useEffect(() => {
         // Function to fetch households data
         const fetchHouseholds = async () => {
@@ -41,6 +42,7 @@ const MyMapComponent = ({reloadPopups}) => {
         fetchHouseholds();
         //fetchStores();
     }, [stores]); // Empty dependency array means this effect runs only once when the component mounts\
+    */
 
     // Define the source and destination projections
     const EPSG3857 = 'EPSG:3857';
