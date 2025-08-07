@@ -89,8 +89,12 @@ const App = () => {
       return;
     }
 
+    const params = new URLSearchParams();
+    params.append('simulation_instance', simulationInstance);
+    params.append('simulation_step', stepNumber);
+
     showLoadingSpinner();
-    window.households_request = client.get('/households?simulation_instance=' + simulationInstance + '&simulation_step=' + stepNumber)
+    window.households_request = client.get('/households?' + params.toString())
       .then(response => {
           window.households_request = null;
           hideLoadingSpinner();
