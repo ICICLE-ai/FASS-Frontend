@@ -19,29 +19,106 @@ const App = () => {
   const [stepNumber, setStepNumber] = useState(0);
   const mapRef = useRef(null); // Store the map instance
   const renderHouseholdsRef = useRef(null); // Reference for render_households function
-   
-  const updateStepNumber = (newStepNumber) => {
-      setStepNumber(newStepNumber);
-  };
 
-  useEffect(() => {
-    console.log("get step number call");
+  //
+  // getting functions
+  //
+
+  const getSimulationInstance = () => {
+    const selectElement = document.getElementById('simulation-instances');
+    return selectElement? selectElement.value : undefined;
+  }
+
+  function toTitleCase(str) {
+    return str.replace(
+      /\w\S*/g,
+      text => text.charAt(0).toUpperCase() + text.substring(1).toLowerCase()
+    );
+  }
+
+  //
+  // setting functions
+  //
+
+  const setSimulationInstances = (simulationInstances) => {
+    const selectElement = document.getElementById('simulation-instances');
+    for (let i = 0; i < simulationInstances.length; i++) {
+        let instance = simulationInstances[i];
+        let name = toTitleCase(instance.name.replace(/_/g, ' '));
+        let value = instance.id;
+        let newOption = new Option(name, value);
+        selectElement.add(newOption, undefined);
+    } 
+  }
+
+  //
+  // loading functions
+  //
+
+  function loadSimulationInstances(options) {
+    return client.get('/simulation-instances')
+      .then(response => {
+          if (options && options.success) {
+            options.success(response.data['simulation_instances']);
+          }
+      })
+      .catch(error => {
+          console.error('Error fetching simulation instances', error);
+      });
+  }
+
+  function loadStores(options) {
+    if (window.stores_request) {
+      return;
+    }
+
+    window.stores_request = client.get('/stores')
+      .then(response => {
+          window.stores_request = null;
+          if (options && options.success) {
+            options.success(response.data.stores_json);
+          }
+      })
+      .catch(error => {
+          console.error('Error fetching stores:', error);
+      });
+  }
+
+  function loadHouseholds(simulationInstance, options) {
+    if (!simulationInstance || simulationInstance == '' || window.households_request) {
+      return;
+    }
+
+    showLoadingSpinner();
+    window.households_request = client.get('/households?simulation_instance=' + simulationInstance + '&simulation_step=' + stepNumber)
+      .then(response => {
+          window.households_request = null;
+          hideLoadingSpinner();
+          if (options && options.success) {
+            options.success(response.data.households_json);
+          }
+      })
+      .catch(error => {
+          console.error('Error fetching households:', error);
+      });
+  }
+
+  function loadStepNumber(options) {
     client.get('/get-step-number')
         .then(response => {
             console.log(response.data);
-            setStepNumber(response.data["step_number"]);
+            if (options && options.success) {
+              options.success(response.data["step_number"]);
+            }
         })
         .catch(error => {
             console.error('Error fetching step number:', error);
         });
-    // fetch(`${API_URL}/get-step-number`)
-    // .then(response => response.json()) // Get the JSON response
-    // .then(data => {
-    //     console.log(data); // Log the data to the console
-    //     setStepNumber(data["step_number"])
-    // })
-    // .catch(error => console.error('Error fetching step number:', error));
-  }, [])
+  }
+
+  //
+  // rendering functions
+  //
 
   function showLoadingSpinner() {
     document.getElementById('loading').style.visibility = 'visible';
@@ -51,55 +128,61 @@ const App = () => {
     document.getElementById('loading').style.visibility = 'hidden';
   }
 
-  const [stores, setStores] = useState([]);
+  const updateStepNumber = (newStepNumber) => {
+      setStepNumber(newStepNumber);
+  };
+
+  //
+  // react callbacks
+  //
+
   useEffect(() => {
+    loadStepNumber({
+      success: (stepNumber) => {
+        window.stepNumber = stepNumber;
+        setStepNumber(stepNumber);
+      }
+    });
+  }, [])
 
-    // make a request for stores, if one is not currently in progress
-    //
-    if (!window.stores_request) {
-      window.stores_request = client.get('/stores')
-        .then(response => {
-            window.stores_request = null;
-            setStores(response.data.stores_json)
-        })
-        .catch(error => {
-            console.error('Error fetching shared:', error);
-        });
-    }
+  const [stores, setStores] = useState([]);
 
-    // fetch(`${API_URL}/shared`)
-    // .then(response => response.json())
-    // .then(data => {
-    //     setStores(data.stores_json);  // Set the list of shared from the API response
-    // })
-    // .catch(error => console.error('Error fetching shared:', error));
+  useEffect(() => {
+    loadStores({
+      success: (stores) => {
+        setStores(stores)
+      }
+    });
   }, []);
 
   const [households, setHouseholds] = useState([]);
 
   useEffect(() => {
 
-    // make a request for stores, if one is not currently in progress
-    //
-    if (!window.households_request) {
-      showLoadingSpinner();
-      window.households_request = client.get('/households')
-        .then(response => {
-            window.households_request = null;
-            setHouseholds(response.data.households_json);
-            hideLoadingSpinner();
-        })
-        .catch(error => {
-            console.error('Error fetching households:', error);
-        });
-    }
+    if (!window.loadingSimulationInstances) {
 
-    // fetch(`${API_URL}/households`)
-    // .then(response => response.json())
-    // .then(data => {
-    //     setHouseholds(data.households_json);  // Set the list of shared from the API response
-    // })
-    // .catch(error => console.error('Error fetching households:', error));
+      // load simulation instances before loading households
+      //
+      window.loadingSimulationInstances = loadSimulationInstances({
+        success: (simulationInstances) => {
+          setSimulationInstances(simulationInstances);
+          loadHouseholds(getSimulationInstance(), {
+            success: (households) => {
+              setHouseholds(households);
+            }
+          });
+        }
+      });
+    } else {
+
+      // load households for given instance
+      //
+      loadHouseholds(getSimulationInstance(), {
+        success: (households) => {
+          setHouseholds(households);
+        }
+      });
+    }
   }, [stepNumber]);
 
   useEffect(() => {
@@ -116,6 +199,10 @@ const App = () => {
     }
   }, [households, stores]);
 
+  //
+  // render
+  //
+
   return (
     <StoreContext.Provider value={{ stores, setStores, stepNumber }}>
       <HouseholdContext.Provider value={{ households, setHouseholds }}>
@@ -126,6 +213,14 @@ const App = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 {/* Left Column */}
                 <div className="bg-blue-200 p-6 rounded-lg shadow-md h-[400px] md:min-h-[80vh]">
+                    
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Simulation</h3>
+                    <div className="space-y-4 flex flex-col items-center">
+                      <select id="simulation-instances" className="rounded-lg">
+                      </select>
+                      <br />
+                    </div>
+
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">Features</h3>
                     <div className="space-y-4 flex flex-col items-center">
                     <AddStoreButton />
