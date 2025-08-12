@@ -9,10 +9,22 @@ const DataComponent = () => {
     const [numNonSPM, setNumNonSPM] = useState(0)
     const [avgIncome, setAvgIncome] = useState(0)
     const [avgVehicles, setAvgVehicles] = useState(0)
+
     useEffect(() => {
         const getNumStores = async () => {
+            if (!window.simulationInstance) {
+              return;
+            }
+
             try {
-                const response = await client.get('/get-num-stores');
+
+                // add search params
+                //
+                const params = new URLSearchParams();
+                params.append('simulation_instance', window.simulationInstance);
+                params.append('simulation_step', window.stepNumber);
+
+                const response = await client.get('/get-num-stores?' + params.toString());
                 setNumSPM(response.data.numSPM);
                 setNumNonSPM(response.data.numNonSPM);
             } catch (error) {
@@ -29,17 +41,23 @@ const DataComponent = () => {
 
         };
 
-            getNumStores();
+        getNumStores();
     }, [stepNumber, stores]); // Dependency on `step` means this effect runs when `step` changes
     useEffect(()=>{
+
         // Triggered whenever `step` changes
         const getNumHouseholds = async () => {
+            if (!window.simulationInstance) {
+              return;
+            }
+
             try {
                 const response = await client.get('/get-num-households');
                 setNumHouseholds(response.data.num_households);
             } catch (error) {
                 console.error('Error fetching shared:', error);
             }
+
             // try {
             //     const response = await fetch(`${API_URL}/get-num-households`); // Your API endpoint
             //     const data = await response.json();
@@ -48,9 +66,21 @@ const DataComponent = () => {
             //     console.error("Error fetching households:", error);
             // }
         };
+
         const getHouseholdStats = async () => {
+            if (!window.simulationInstance) {
+              return;
+            }
+
             try {
-                const response = await client.get('/get-household-stats');
+
+                // add search params
+                //
+                const params = new URLSearchParams();
+                params.append('simulation_instance_id', window.simulationInstance);
+                params.append('simulation_step', window.stepNumber);
+
+                const response = await client.get('/get-household-stats?' + params.toString());
                 setAvgIncome(response.data.avg_income);
                 setAvgVehicles(response.data.avg_vehicles);
             } catch (error) {

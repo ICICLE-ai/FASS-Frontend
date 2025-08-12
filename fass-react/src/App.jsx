@@ -24,7 +24,11 @@ const App = () => {
   // getting functions
   //
 
-  const getSimulationInstance = () => {
+  const hasSimulations = () => {
+    return document.getElementById('simulation-instances').options.length > 0;
+  }
+
+  const getSimulationInstanceId = () => {
     const selectElement = document.getElementById('simulation-instances');
     return selectElement? selectElement.value : undefined;
   }
@@ -40,43 +44,66 @@ const App = () => {
   // setting functions
   //
 
-  const setSimulationInstances = (simulationInstances) => {
+  const addSimulationInstance = (simulationInstance) => {
     const selectElement = document.getElementById('simulation-instances');
+    let name = toTitleCase(simulationInstance.name.replace(/_/g, ' '));
+    let value = simulationInstance.id;
+    let newOption = new Option(name, value);
+    selectElement.add(newOption, undefined);
+  }
+
+  const addSimulationInstances = (simulationInstances) => {
     for (let i = 0; i < simulationInstances.length; i++) {
-        let instance = simulationInstances[i];
-        let name = toTitleCase(instance.name.replace(/_/g, ' '));
-        let value = instance.id;
-        let newOption = new Option(name, value);
-        selectElement.add(newOption, undefined);
+        addSimulationInstance(simulationInstances[i]);
     } 
   }
 
   //
-  // loading functions
+  // fetching functions
   //
 
-  function loadSimulationInstances(options) {
-    return client.get('/simulation-instances')
+  function fetchSimulationInstances(options) {
+    if (window.simulations_request || window.simlationInstances) {
+      return;
+    }
+
+    window.simulations_request = client.get('/simulation-instances')
       .then(response => {
+          window.simulations_request = null;
+          if (response.data['simulation_instances']) {
+            window.simulationInstances = response.data['simulation_instances'];
+          }
+
           if (options && options.success) {
-            options.success(response.data['simulation_instances']);
+            options.success(window.simulationInstances);
           }
       })
       .catch(error => {
           console.error('Error fetching simulation instances', error);
       });
+
+      return window.simulations_request;
   }
 
-  function loadStores(options) {
-    if (window.stores_request) {
+  function fetchStores(simulationInstanceId, options) {
+    if (window.stores_request || !simulationInstanceId) {
       return;
     }
 
-    window.stores_request = client.get('/stores')
+    // add search params
+    //
+    const params = new URLSearchParams();
+    params.append('simulation_instance', simulationInstanceId);
+    params.append('simulation_step', window.stepNumber);
+
+    window.stores_request = client.get('/stores?' + params.toString())
       .then(response => {
           window.stores_request = null;
+
+          // perform callback
+          //
           if (options && options.success) {
-            options.success(response.data.stores_json);
+            options.success(response.data.store_json);
           }
       })
       .catch(error => {
@@ -84,20 +111,25 @@ const App = () => {
       });
   }
 
-  function loadHouseholds(simulationInstance, options) {
-    if (!simulationInstance || simulationInstance == '' || window.households_request) {
+  function fetchHouseholds(simulationInstanceId, options) {
+    if (!simulationInstanceId || simulationInstanceId == '' || window.households_request) {
       return;
     }
 
+    // add search params
+    //
     const params = new URLSearchParams();
-    params.append('simulation_instance', simulationInstance);
-    params.append('simulation_step', stepNumber);
+    params.append('simulation_instance', simulationInstanceId);
+    params.append('simulation_step', window.stepNumber);
 
     showLoadingSpinner();
     window.households_request = client.get('/households?' + params.toString())
       .then(response => {
           window.households_request = null;
           hideLoadingSpinner();
+
+          // perform callback
+          //
           if (options && options.success) {
             options.success(response.data.households_json);
           }
@@ -107,17 +139,125 @@ const App = () => {
       });
   }
 
-  function loadStepNumber(options) {
-    client.get('/get-step-number')
-        .then(response => {
-            console.log(response.data);
-            if (options && options.success) {
-              options.success(response.data["step_number"]);
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching step number:', error);
-        });
+  function fetchStepNumber(simulationInstanceId, options) {
+    if (!simulationInstanceId) {
+      return;
+    }
+
+    // add search params
+    //
+    const params = new URLSearchParams();
+    params.append('simulation_instance', simulationInstanceId);
+
+    client.get('/get-step-number?' + params.toString())
+      .then(response => {
+          console.log(response.data);
+
+          // perform callback
+          //
+          if (options && options.success) {
+            options.success(response.data["step_number"]);
+          }
+      })
+      .catch(error => {
+          console.error('Error fetching step number:', error);
+      });
+  }
+
+  //
+  // loading methods
+  //
+
+  function loadSimulationInstances(options) {
+    fetchSimulationInstances({
+      success: (simulationInstances) => {
+        if (!hasSimulations()) {
+          addSimulationInstances(simulationInstances);
+        }
+
+        // perform callback
+        //
+        if (options && options.success) {
+          options.success(simulationInstances);
+        }
+      }
+    })
+  }
+  
+  function loadHouseholds(simulationInstanceId, options) {
+    if (!hasSimulations()) {
+
+      // load simulation instances before loading households
+      //
+      loadSimulationInstances({
+        success: () => {
+          let simulationInstanceId = getSimulationInstanceId();
+          loadHouseholds(simulationInstanceId, options);
+        }
+      });
+    } else {
+
+      // load households for given instance
+      //
+      fetchHouseholds(simulationInstanceId, {
+        success: (households) => {
+          setHouseholds(households);
+
+          // perform callback
+          //
+          if (options && options.success) {
+            options.success();
+          }
+        }
+      });
+    }
+  }
+
+  function loadStepNumber(simulationInstanceId, options) {
+    fetchStepNumber(simulationInstanceId, {
+      success: (stepNumber) => {
+        window.stepNumber = stepNumber;
+        setStepNumber(stepNumber);
+
+        // perform callback
+        //
+        if (options && options.success) {
+          options.success();
+        }
+      }
+    });
+  }
+
+  function loadStores(simulationInstanceId, options) {
+    if (!simulationInstanceId) {
+      return;
+    }
+
+    if (!hasSimulations()) {
+
+      // load simulation instances before loading households
+      //
+      loadSimulationInstances({
+        success: () => {
+          loadStores(simulationInstanceId, options);
+        }
+      });
+    } else {
+
+      // load households for given instance
+      //
+      fetchStores(simulationInstanceId, {
+        success: (stores) => {
+          setStores(stores);
+
+          // perform callback
+          //
+          if (options && options.success) {
+            options.success();
+          }
+        }
+      });
+    }
   }
 
   //
@@ -136,56 +276,55 @@ const App = () => {
       setStepNumber(newStepNumber);
   };
 
+  const updateSimulation = () => {
+    if (hasSimulations()) {
+      let simulationId = getSimulationInstanceId();
+      loadStores(simulationId);
+      loadHouseholds(simulationId);
+    } else {
+      loadSimulationInstances({
+        success: () => {
+          updateSimualation();
+        }
+      })
+    }
+  };
+
   //
   // react callbacks
   //
 
   useEffect(() => {
-    loadStepNumber({
-      success: (stepNumber) => {
-        window.stepNumber = stepNumber;
-        setStepNumber(stepNumber);
-      }
-    });
+    let simulationInstanceId = getSimulationInstanceId();
+    if (simulationInstanceId) {
+      loadStepNumber(simulationInstanceId);
+    } else {
+      loadSimulationInstances({
+        success: () => {
+           let simulationInstanceId = getSimulationInstanceId();
+           if (simulationInstanceId) {
+            loadStepNumber(simulationInstanceId);
+          }
+        }
+      })
+    }
   }, [])
 
   const [stores, setStores] = useState([]);
 
   useEffect(() => {
-    loadStores({
-      success: (stores) => {
-        setStores(stores)
-      }
-    });
+    let simulationInstanceId = getSimulationInstanceId();
+    if (simulationInstanceId) {
+      loadStores(simulationInstanceId);
+    }
   }, []);
 
   const [households, setHouseholds] = useState([]);
 
   useEffect(() => {
-
-    if (!window.loadingSimulationInstances) {
-
-      // load simulation instances before loading households
-      //
-      window.loadingSimulationInstances = loadSimulationInstances({
-        success: (simulationInstances) => {
-          setSimulationInstances(simulationInstances);
-          loadHouseholds(getSimulationInstance(), {
-            success: (households) => {
-              setHouseholds(households);
-            }
-          });
-        }
-      });
-    } else {
-
-      // load households for given instance
-      //
-      loadHouseholds(getSimulationInstance(), {
-        success: (households) => {
-          setHouseholds(households);
-        }
-      });
+    let simulationInstanceId = getSimulationInstanceId();
+    if (simulationInstanceId) {
+      loadHouseholds(simulationInstanceId);
     }
   }, [stepNumber]);
 
@@ -198,6 +337,9 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    if (!households || !stores) {
+      return;
+    }
     if (renderHouseholdsRef.current && households.length > 0 && stores.length > 0) {
       renderHouseholdsRef.current(households, stores);
     }
@@ -220,7 +362,7 @@ const App = () => {
                     
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">Simulation</h3>
                     <div className="space-y-4 flex flex-col items-center">
-                      <select id="simulation-instances" className="rounded-lg">
+                      <select id="simulation-instances" className="rounded-lg" onChange={updateSimulation}>
                       </select>
                       <br />
                     </div>

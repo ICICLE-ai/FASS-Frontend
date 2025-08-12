@@ -11,7 +11,11 @@ const StepButton = ({updateStepNumber}) => {
     const [loading, setLoading] = useState(false);
     const step = () => {
       setLoading(true)
-        client.put("/step", {}, {
+
+        const params = new URLSearchParams();
+        params.append('simulation_instance_id', simulationInstance);
+
+        client.put('/step?' + params.toString(), {}, {
             headers: headers
         })
         .then(response => {
