@@ -1,10 +1,13 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { StoreContext } from '../App';
+import { HouseholdContext } from '../App';
 import { client } from "../shared/client.js";
+import { hasSimulations, hasSimulationInstance, getSimulationInstanceId, getStepNumber } from '../App';
 
 const DataComponent = () => {
     const {stepNumber, stores} = useContext(StoreContext)
-    const [numHouseholds, setNumHouseholds] = useState(0) 
+    const {households} = useContext(HouseholdContext)
+    const [numHouseholds, setNumHouseholds] = useState(0)
     const [numSPM, setNumSPM] = useState(0)
     const [numNonSPM, setNumNonSPM] = useState(0)
     const [avgIncome, setAvgIncome] = useState(0)
@@ -12,7 +15,7 @@ const DataComponent = () => {
 
     useEffect(() => {
         const getNumStores = async () => {
-            if (!window.simulationInstance) {
+            if (!hasSimulationInstance()) {
               return;
             }
 
@@ -21,8 +24,8 @@ const DataComponent = () => {
                 // add search params
                 //
                 const params = new URLSearchParams();
-                params.append('simulation_instance', window.simulationInstance);
-                params.append('simulation_step', window.stepNumber);
+                params.append('simulation_instance_id', getSimulationInstanceId());
+                params.append('simulation_step', getStepNumber());
 
                 const response = await client.get('/get-num-stores?' + params.toString());
                 setNumSPM(response.data.numSPM);
@@ -30,6 +33,7 @@ const DataComponent = () => {
             } catch (error) {
                 console.error('Error fetching shared:', error);
             }
+
             // try {
             //     const response = await fetch(`${API_URL}/get-num-stores`); // Your API endpoint
             //     const data = await response.json();
@@ -43,16 +47,23 @@ const DataComponent = () => {
 
         getNumStores();
     }, [stepNumber, stores]); // Dependency on `step` means this effect runs when `step` changes
-    useEffect(()=>{
+    
+    useEffect(() => {
 
         // Triggered whenever `step` changes
         const getNumHouseholds = async () => {
-            if (!window.simulationInstance) {
+            if (!hasSimulationInstance()) {
               return;
             }
 
+            // add search params
+            //
+            const params = new URLSearchParams();
+            params.append('simulation_instance_id', getSimulationInstanceId());
+            params.append('simulation_step', getStepNumber());
+
             try {
-                const response = await client.get('/get-num-households');
+                const response = await client.get('/get-num-households?' + params.toString());
                 setNumHouseholds(response.data.num_households);
             } catch (error) {
                 console.error('Error fetching shared:', error);
@@ -68,7 +79,7 @@ const DataComponent = () => {
         };
 
         const getHouseholdStats = async () => {
-            if (!window.simulationInstance) {
+            if (!hasSimulationInstance()) {
               return;
             }
 
@@ -77,8 +88,8 @@ const DataComponent = () => {
                 // add search params
                 //
                 const params = new URLSearchParams();
-                params.append('simulation_instance_id', window.simulationInstance);
-                params.append('simulation_step', window.stepNumber);
+                params.append('simulation_instance_id', getSimulationInstanceId());
+                params.append('simulation_step', getStepNumber());
 
                 const response = await client.get('/get-household-stats?' + params.toString());
                 setAvgIncome(response.data.avg_income);
@@ -95,9 +106,11 @@ const DataComponent = () => {
             //     console.error("Error fetching households:", error);
             // }
         };
+
         getHouseholdStats(); //technically households and household stats can just be run once on initialization 
         getNumHouseholds();
-    },[])
+    }, [numHouseholds, households])
+
     const formatCurrency = (value) => {
         const currency = new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -105,6 +118,7 @@ const DataComponent = () => {
           }).format(value)
         return currency
     }
+
     return (
     <div>
         <b>Step: {stepNumber}</b>
@@ -118,7 +132,6 @@ const DataComponent = () => {
         <p>Avg Household Vehicles: {avgVehicles.toFixed(2)}</p>
     </div>
     );
-
 };
 
 export default DataComponent

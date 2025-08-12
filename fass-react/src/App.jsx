@@ -15,23 +15,35 @@ import { client} from "./shared/client.js";
 export const StoreContext = createContext();
 export const HouseholdContext = createContext();
 
+//
+// querying functions
+//
+
+export function hasSimulations() {
+  return document.getElementById('simulation-instances').options.length > 0;
+}
+
+export function hasSimulationInstance() {
+  return getSimulationInstanceId() != '';
+}
+
+//
+// getting functions
+//
+
+export function getSimulationInstanceId() {
+  const selectElement = document.getElementById('simulation-instances');
+  return selectElement? selectElement.value : undefined;
+}
+
+export function getStepNumber() {
+  return window.stepNumber || 0;
+}
+
 const App = () => {
   const [stepNumber, setStepNumber] = useState(0);
   const mapRef = useRef(null); // Store the map instance
   const renderHouseholdsRef = useRef(null); // Reference for render_households function
-
-  //
-  // getting functions
-  //
-
-  const hasSimulations = () => {
-    return document.getElementById('simulation-instances').options.length > 0;
-  }
-
-  const getSimulationInstanceId = () => {
-    const selectElement = document.getElementById('simulation-instances');
-    return selectElement? selectElement.value : undefined;
-  }
 
   function toTitleCase(str) {
     return str.replace(
@@ -94,7 +106,7 @@ const App = () => {
     //
     const params = new URLSearchParams();
     params.append('simulation_instance', simulationInstanceId);
-    params.append('simulation_step', window.stepNumber);
+    params.append('simulation_step', getStepNumber());
 
     window.stores_request = client.get('/stores?' + params.toString())
       .then(response => {
@@ -120,7 +132,7 @@ const App = () => {
     //
     const params = new URLSearchParams();
     params.append('simulation_instance', simulationInstanceId);
-    params.append('simulation_step', window.stepNumber);
+    params.append('simulation_step', getStepNumber());
 
     showLoadingSpinner();
     window.households_request = client.get('/households?' + params.toString())
@@ -276,15 +288,21 @@ const App = () => {
       setStepNumber(newStepNumber);
   };
 
-  const updateSimulation = () => {
+  const updateCurrentSimulation = () => {
+    let currentSimulationId = getSimulationInstanceId();
+    if (currentSimulationId) {
+      updateSimulation(currentSimulationId);
+    }
+  };
+
+  const updateSimulation = (simulationInstanceId) => {
     if (hasSimulations()) {
-      let simulationId = getSimulationInstanceId();
-      loadStores(simulationId);
-      loadHouseholds(simulationId);
+      loadStores(simulationInstanceId);
+      loadHouseholds(simulationInstanceId);
     } else {
       loadSimulationInstances({
         success: () => {
-          updateSimualation();
+          updateSimulation(simulationInstanceId);
         }
       })
     }
@@ -297,12 +315,14 @@ const App = () => {
   useEffect(() => {
     let simulationInstanceId = getSimulationInstanceId();
     if (simulationInstanceId) {
+      updateSimulation(simulationInstanceId);
       loadStepNumber(simulationInstanceId);
     } else {
       loadSimulationInstances({
         success: () => {
            let simulationInstanceId = getSimulationInstanceId();
            if (simulationInstanceId) {
+            updateSimulation(simulationInstanceId);
             loadStepNumber(simulationInstanceId);
           }
         }
@@ -311,6 +331,7 @@ const App = () => {
   }, [])
 
   const [stores, setStores] = useState([]);
+  const [households, setHouseholds] = useState([]);
 
   useEffect(() => {
     let simulationInstanceId = getSimulationInstanceId();
@@ -318,8 +339,6 @@ const App = () => {
       loadStores(simulationInstanceId);
     }
   }, []);
-
-  const [households, setHouseholds] = useState([]);
 
   useEffect(() => {
     let simulationInstanceId = getSimulationInstanceId();
@@ -362,7 +381,7 @@ const App = () => {
                     
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">Simulation</h3>
                     <div className="space-y-4 flex flex-col items-center">
-                      <select id="simulation-instances" className="rounded-lg" onChange={updateSimulation}>
+                      <select id="simulation-instances" className="rounded-lg" onChange={updateCurrentSimulation}>
                       </select>
                       <br />
                     </div>
