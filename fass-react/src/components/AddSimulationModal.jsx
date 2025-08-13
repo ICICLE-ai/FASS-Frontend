@@ -75,7 +75,7 @@ const AddSimulationModal = ({ show, handleClose }) => {
           <Form.Group className="mb-3">
             <Form.Label># of Households</Form.Label>
             <Form.Control
-              type="text"
+              type="number"
               placeholder="Enter number of households"
               name="household_limit"
               value={formData.household_limit}
