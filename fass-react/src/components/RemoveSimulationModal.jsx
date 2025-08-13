@@ -29,7 +29,7 @@ const RemoveSimulationModal = ({show, handleClose}) => {
                 //
                 updateSimulations();
             }).catch(error => {
-            console.error('Error with remove-store function:', error);
+            console.error('Error with remove-simulation function:', error);
         });
     };
 
@@ -51,8 +51,8 @@ const RemoveSimulationModal = ({show, handleClose}) => {
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={handleSubmit}>
-                    <Form.Group controlId="store-select">
-                        <Form.Label>Choose a simulation:</Form.Label>
+                    <Form.Group controlId="simulation-select">
+                        <Form.Label>Choose a simulation to remove:</Form.Label>
                         <Form.Select value={selectedSimulation} onChange={handleSelectChange}>
                             <option value="">--Select a simulation--</option>
                             {simulations ? (simulations.map((simulation, index) => (
