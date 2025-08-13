@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef, createContext } from 'react';
 import TopBar from './components/TopBar';
+import AddSimulationButton from './components/AddSimulationButton';
+import RemoveSimulationButton from './components/RemoveSimulationButton';
 import AddStoreButton from './components/AddStoreButton';
 import RemoveStoreButton from './components/RemoveStoreButton';
 import ResetButton from './components/ResetButton';
@@ -10,10 +12,11 @@ import Legend from './components/LegendComponent';
 import DataComponent from './components/DataComponent';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css'
-import { client} from "./shared/client.js";
+import { client } from "./shared/client.js";
 
 export const StoreContext = createContext();
 export const HouseholdContext = createContext();
+export var simulations = [];
 
 //
 // querying functions
@@ -24,7 +27,7 @@ export function hasSimulations() {
 }
 
 export function hasSimulationInstance() {
-  return getSimulationInstanceId() != '';
+  return getSimulationInstanceId() != undefined;
 }
 
 //
@@ -33,12 +36,25 @@ export function hasSimulationInstance() {
 
 export function getSimulationInstanceId() {
   const selectElement = document.getElementById('simulation-instances');
-  return selectElement? selectElement.value : undefined;
+  const value = selectElement? selectElement.value : undefined;
+  return value && value != ''? value : undefined;
 }
 
 export function getStepNumber() {
   return window.stepNumber || 0;
 }
+
+//
+// setting methods
+//
+
+export function updateSimulations() {
+  window.updateSimulations();
+}
+
+//
+// main app
+//
 
 const App = () => {
   const [stepNumber, setStepNumber] = useState(0);
@@ -53,10 +69,15 @@ const App = () => {
   }
 
   //
-  // setting functions
+  // simulation selector functions
   //
 
-  const addSimulationInstance = (simulationInstance) => {
+  function clearSimulationInstances() {
+    const selectElement = document.getElementById('simulation-instances');
+    selectElement.options.length = 0;
+  }
+
+  function addSimulationInstance(simulationInstance) {
     const selectElement = document.getElementById('simulation-instances');
     let name = toTitleCase(simulationInstance.name.replace(/_/g, ' '));
     let value = simulationInstance.id;
@@ -64,10 +85,15 @@ const App = () => {
     selectElement.add(newOption, undefined);
   }
 
-  const addSimulationInstances = (simulationInstances) => {
+  function addSimulationInstances(simulationInstances) {
     for (let i = 0; i < simulationInstances.length; i++) {
         addSimulationInstance(simulationInstances[i]);
     } 
+  }
+
+  function setSimulationInstances(simulationInstances) {
+    clearSimulationInstances();
+    addSimulationInstances(simulationInstances);
   }
 
   //
@@ -75,13 +101,8 @@ const App = () => {
   //
 
   function fetchSimulationInstances(options) {
-    if (window.simulations_request || window.simlationInstances) {
-      return;
-    }
-
-    window.simulations_request = client.get('/simulation-instances')
+    return client.get('/simulation-instances')
       .then(response => {
-          window.simulations_request = null;
           if (response.data['simulation_instances']) {
             window.simulationInstances = response.data['simulation_instances'];
           }
@@ -90,13 +111,6 @@ const App = () => {
             options.success(window.simulationInstances);
           }
       });
-      /*
-      .catch(error => {
-          console.error('Error fetching simulation instances', error);
-      });
-      */
-
-      return window.simulations_request;
   }
 
   function fetchStores(simulationInstanceId, options) {
@@ -126,7 +140,7 @@ const App = () => {
   }
 
   function fetchHouseholds(simulationInstanceId, options) {
-    if (!simulationInstanceId || simulationInstanceId == '' || window.households_request) {
+    if (!simulationInstanceId || simulationInstanceId == '') {
       return;
     }
 
@@ -137,9 +151,8 @@ const App = () => {
     params.append('simulation_step', getStepNumber());
 
     showLoadingSpinner();
-    window.households_request = client.get('/households?' + params.toString())
+    return client.get('/households?' + params.toString())
       .then(response => {
-          window.households_request = null;
           hideLoadingSpinner();
 
           // perform callback
@@ -163,7 +176,7 @@ const App = () => {
     const params = new URLSearchParams();
     params.append('simulation_instance', simulationInstanceId);
 
-    client.get('/get-step-number?' + params.toString())
+    return client.get('/get-step-number?' + params.toString())
       .then(response => {
           console.log(response.data);
 
@@ -183,11 +196,18 @@ const App = () => {
   //
 
   function loadSimulationInstances(options) {
-    fetchSimulationInstances({
+    if (window.simulation_request) {
+      return;
+    }
+
+    window.simulation_request = fetchSimulationInstances({
       success: (simulationInstances) => {
-        if (!hasSimulations()) {
-          addSimulationInstances(simulationInstances);
-        }
+        simulations = simulationInstances;
+        window.simulation_request = null;
+
+        // update simulation selector
+        //
+        setSimulationInstances(simulationInstances);
 
         // perform callback
         //
@@ -209,12 +229,13 @@ const App = () => {
           loadHouseholds(simulationInstanceId, options);
         }
       });
-    } else {
+    } else if (!window.households_request) {
 
       // load households for given instance
       //
-      fetchHouseholds(simulationInstanceId, {
+      window.households_request = fetchHouseholds(simulationInstanceId, {
         success: (households) => {
+          window.households_request = null;
           setHouseholds(households);
 
           // perform callback
@@ -320,26 +341,26 @@ const App = () => {
     }
   };
 
+  function updateSimulations() {
+    loadSimulationInstances({
+      success: () => {
+         let simulationInstanceId = getSimulationInstanceId();
+         if (simulationInstanceId) {
+          updateSimulation(simulationInstanceId);
+          loadStepNumber(simulationInstanceId);
+        }
+      }
+    });
+  }
+
+  window.updateSimulations = updateSimulations;
+
   //
   // react callbacks
   //
 
   useEffect(() => {
-    let simulationInstanceId = getSimulationInstanceId();
-    if (simulationInstanceId) {
-      updateSimulation(simulationInstanceId);
-      loadStepNumber(simulationInstanceId);
-    } else {
-      loadSimulationInstances({
-        success: () => {
-           let simulationInstanceId = getSimulationInstanceId();
-           if (simulationInstanceId) {
-            updateSimulation(simulationInstanceId);
-            loadStepNumber(simulationInstanceId);
-          }
-        }
-      })
-    }
+    updateSimulations();
   }, [])
 
   const [stores, setStores] = useState([]);
@@ -395,17 +416,22 @@ const App = () => {
                     
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">Simulation</h3>
                     <div className="space-y-4 flex flex-col items-center">
-                      <select id="simulation-instances" className="rounded-lg" onChange={updateCurrentSimulation}>
-                      </select>
-                      <br />
+                      <div className="space-y-4 flex flex-col items-center">
+                        <select id="simulation-instances" className="rounded-lg" onChange={updateCurrentSimulation}>
+                        </select>
+                      </div>
+                      <AddSimulationButton />
+                      <RemoveSimulationButton />
                     </div>
+
+                    <br />
 
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">Features</h3>
                     <div className="space-y-4 flex flex-col items-center">
-                    <AddStoreButton />
-                    <RemoveStoreButton />
-                    <StepButton updateStepNumber={updateStepNumber} />
-                    <ResetButton/>
+                      <AddStoreButton />
+                      <RemoveStoreButton />
+                      <StepButton updateStepNumber={updateStepNumber} />
+                      <ResetButton/>
                     </div>
                 </div>
 

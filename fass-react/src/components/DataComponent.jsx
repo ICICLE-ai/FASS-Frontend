@@ -19,7 +19,7 @@ const DataComponent = () => {
               return;
             }
 
-            try {
+           //  try {
 
                 // add search params
                 //
@@ -30,19 +30,12 @@ const DataComponent = () => {
                 const response = await client.get('/get-num-stores?' + params.toString());
                 setNumSPM(response.data.numSPM);
                 setNumNonSPM(response.data.numNonSPM);
+
+            /*
             } catch (error) {
                 console.error('Error fetching shared:', error);
             }
-
-            // try {
-            //     const response = await fetch(`${API_URL}/get-num-stores`); // Your API endpoint
-            //     const data = await response.json();
-            //     setNumSPM(data.numSPM);
-            //     setNumNonSPM(data.numNonSPM);
-            // } catch (error) {
-            //     console.error("Error fetching shared:", error);
-            // }
-
+            */
         };
 
         getNumStores();
