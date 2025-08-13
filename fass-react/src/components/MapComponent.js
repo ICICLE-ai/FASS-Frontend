@@ -66,7 +66,6 @@ export function initializeMap(mapId, households, stores) {
     // icons
     //
 
-    /*
     const icons = {
         convenience: getMapIcon('convenience-store.svg', 'transparent-shadow.svg'),
         supermarket: getMapIcon('supermarket.svg', 'transparent-shadow.svg'),
@@ -75,17 +74,6 @@ export function initializeMap(mapId, households, stores) {
         green_house: getMapIcon('house-green.svg', 'shadow.svg'),
         yellow_house: getMapIcon('house-yellow.svg', 'shadow.svg'),
         red_house: getMapIcon('house-red.svg', 'shadow.svg')
-    };
-    */
-
-    const icons = {
-        convenience: getMapIcon('convenience-store.svg'),
-        supermarket: getMapIcon('supermarket.svg'),
-        dot: getMapIcon('dot.svg'),
-        house: getMapIcon('house.svg'),
-        green_house: getMapIcon('house-green.svg'),
-        yellow_house: getMapIcon('house-yellow.svg'),
-        red_house: getMapIcon('house-red.svg')
     };
 
     //
