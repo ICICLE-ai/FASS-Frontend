@@ -305,6 +305,7 @@ const App = () => {
       setStores([]);
       setHouseholds([]);
       mapRef.clearAll();
+      window.stepNumber = undefined;
 
       // load new simulation data
       //
