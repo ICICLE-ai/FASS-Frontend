@@ -72,6 +72,18 @@ const AddSimulationModal = ({ show, handleClose }) => {
             />
           </Form.Group>
 
+          <Form.Group className="mb-3">
+            <Form.Label># of Households</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Enter number of households"
+              name="household_limit"
+              value={formData.household_limit}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+
           <Button variant="primary" type="submit">
             Submit
           </Button>
