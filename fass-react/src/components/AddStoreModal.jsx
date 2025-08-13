@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { StoreContext } from '../App';
 import { client } from "../shared/client.js";
+import { getSimulationInstanceId } from '../App';
 
 const AddStoreModal = ({ show, handleClose }) => {
     const {stores, setStores} = useContext(StoreContext)  
@@ -36,7 +37,7 @@ const AddStoreModal = ({ show, handleClose }) => {
       console.log('Success:', response.data);
 
       const params = new URLSearchParams();
-      params.append('simulation_instance', simulationInstance);
+      params.append('simulation_instance', getSimulationInstanceId());
 
       try {
         const response = await client.get('/stores?' + params.toString());

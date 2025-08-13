@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Spinner } from 'react-bootstrap';
 import { client} from "../shared/client.js";
+import { getSimulationInstanceId } from '../App';
 
 // const API_URL = import.meta.env.VITE_API_URL || "__API__URL__";
 const headers = {
@@ -10,12 +11,8 @@ const headers = {
 const StepButton = ({updateStepNumber}) => {
     const [loading, setLoading] = useState(false);
     const step = () => {
-      setLoading(true)
-
-        const params = new URLSearchParams();
-        params.append('simulation_instance_id', simulationInstance);
-
-        client.put('/step?' + params.toString(), {}, {
+        setLoading(true)
+        client.post('/simulation-instances/' + getSimulationInstanceId() + '/advance', {}, {
             headers: headers
         })
         .then(response => {
