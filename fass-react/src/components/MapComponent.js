@@ -6,11 +6,6 @@ import '../../markercluster/leaflet.markercluster-src.js'
 
 export function initializeMap(mapId, households, stores) {
 
-    // Remove existing map instance if it exists
-    if (L.DomUtil.get(mapId) && L.DomUtil.get(mapId)._leaflet_id) {
-        L.DomUtil.get(mapId)._leaflet_id = null; // Clear the map's leaflet ID to prevent errors
-    }
-
     // Initialize a new map instance
     const map = L.map(mapId, {
         dragging: true,
@@ -58,7 +53,7 @@ export function initializeMap(mapId, households, stores) {
     };
 
     // Initialize a layer group for households at the top level so it can be modified later
-    const householdLayer = L.layerGroup().addTo(map);
+    let householdLayer = L.layerGroup().addTo(map);
     const CLUSTER_STORES = false;
     const CLUSTER_HOUSEHOLDS = true;
     const CLUSTER_OPTIONS = {
@@ -71,6 +66,7 @@ export function initializeMap(mapId, households, stores) {
     // icons
     //
 
+    /*
     const icons = {
         convenience: getMapIcon('convenience-store.svg', 'transparent-shadow.svg'),
         supermarket: getMapIcon('supermarket.svg', 'transparent-shadow.svg'),
@@ -80,6 +76,35 @@ export function initializeMap(mapId, households, stores) {
         yellow_house: getMapIcon('house-yellow.svg', 'shadow.svg'),
         red_house: getMapIcon('house-red.svg', 'shadow.svg')
     };
+    */
+
+    const icons = {
+        convenience: getMapIcon('convenience-store.svg'),
+        supermarket: getMapIcon('supermarket.svg'),
+        dot: getMapIcon('dot.svg'),
+        house: getMapIcon('house.svg'),
+        green_house: getMapIcon('house-green.svg'),
+        yellow_house: getMapIcon('house-yellow.svg'),
+        red_house: getMapIcon('house-red.svg')
+    };
+
+    //
+    // rendering functions
+    //
+
+    function clear() {
+        // Remove existing map instance if it exists
+        if (L.DomUtil.get(mapId) && L.DomUtil.get(mapId)._leaflet_id) {
+            L.DomUtil.get(mapId)._leaflet_id = null; // Clear the map's leaflet ID to prevent errors
+        }
+    }
+
+    function clearAll() {
+        householdLayer.clearLayers();
+        map.removeLayer(householdLayer);
+        householdLayer = null;
+        householdLayer = L.layerGroup().addTo(map);
+    }
 
     //
     // icon rendering functions
@@ -317,10 +342,12 @@ export function initializeMap(mapId, households, stores) {
         }
     }
 
+    clear();
+
     // Render the initial households and stores
     //
     // renderAll(households, stores);
 
     // Return the map and the render_households function so it can be called externally if needed
-    return { map, renderAll };
+    return { map, clearAll, renderAll };
 }

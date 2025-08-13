@@ -89,10 +89,12 @@ const App = () => {
           if (options && options.success) {
             options.success(window.simulationInstances);
           }
-      })
+      });
+      /*
       .catch(error => {
           console.error('Error fetching simulation instances', error);
       });
+      */
 
       return window.simulations_request;
   }
@@ -297,6 +299,15 @@ const App = () => {
 
   const updateSimulation = (simulationInstanceId) => {
     if (hasSimulations()) {
+
+      // clear previous simulation
+      //
+      setStores([]);
+      setHouseholds([]);
+      mapRef.clearAll();
+
+      // load new simulation data
+      //
       loadStores(simulationInstanceId);
       loadHouseholds(simulationInstanceId);
     } else {
@@ -349,8 +360,10 @@ const App = () => {
 
   useEffect(() => {
     if (!mapRef.current) {
-      const { map, renderAll } = initializeMap('map', households, stores);
+      const { map, clear, clearAll, renderAll } = initializeMap('map', households, stores);
       mapRef.current = map;
+      mapRef.clear = clear;
+      mapRef.clearAll = clearAll;
       renderHouseholdsRef.current = renderAll;
     }
   }, []);
