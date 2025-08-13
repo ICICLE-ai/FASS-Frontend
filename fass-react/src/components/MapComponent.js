@@ -257,58 +257,59 @@ export function initializeMap(mapId, households, stores) {
     // clustering methods
     //
 
-    const householdsClusterGroup = L.markerClusterGroup({
+    function  getNewHouseholdsClusterGroup() {
+        return L.markerClusterGroup({
+            options: Object.assign(L.MarkerClusterGroup.prototype.options, CLUSTER_OPTIONS),
 
-        options: Object.assign(L.MarkerClusterGroup.prototype.options, CLUSTER_OPTIONS),
+            iconCreateFunction: function (cluster) {
+                const markers = cluster.getAllChildMarkers();
+                const values = markers.map(m => m.options.score);
+                let mean = values.reduce((sum, v) => sum + v, 0) / values.length;
 
-        iconCreateFunction: function (cluster) {
-            const markers = cluster.getAllChildMarkers();
-            const values = markers.map(m => m.options.score);
-            let mean = values.reduce((sum, v) => sum + v, 0) / values.length;
+                if (mean == undefined) {
+                    mean = 0;
+                }
+                if (mean > 100) {
+                    mean = 100;
+                }
+                let value = (mean - 50) / 50;
+                let count = markers.length;
 
-            if (mean == undefined) {
-                mean = 0;
+                // Map mean to hue (green for low, red for high)
+                // const hue = mean > 50? 0 + ((mean - 50) / 50) * 120 : 0;
+                // const color = `hsl(${Math.max(0, Math.min(120, hue))}, 50%, 50%)`;
+
+                let icon = "house-red.svg";
+                let brightness = 1 + value * 0.75;
+
+                /*
+                if (mean > 75) {
+                    icon = "house-green.svg";
+                } else if (mean > 50) {
+                    icon = "house-yellow.svg";
+                } else {
+                    icon = "house-red.svg";
+                }
+                */
+
+                return new L.DivIcon({
+                    html: `<div class="household">
+                        <img class="icon" src="markers/${icon}" style="filter:hue-rotate(${value * 80}deg) brightness(${brightness})">
+                        <span class="label">${count.toFixed(0)}</span>
+                    </div>`,
+                    className: '',
+                    iconSize: new L.Point(50, 50)
+                });
             }
-            if (mean > 100) {
-                mean = 100;
-            }
-            let value = (mean - 50) / 50;
-            let count = markers.length;
-
-            // Map mean to hue (green for low, red for high)
-            // const hue = mean > 50? 0 + ((mean - 50) / 50) * 120 : 0;
-            // const color = `hsl(${Math.max(0, Math.min(120, hue))}, 50%, 50%)`;
-
-            let icon = "house-red.svg";
-            let brightness = 1 + value * 0.75;
-
-            /*
-            if (mean > 75) {
-                icon = "house-green.svg";
-            } else if (mean > 50) {
-                icon = "house-yellow.svg";
-            } else {
-                icon = "house-red.svg";
-            }
-            */
-
-            return new L.DivIcon({
-                html: `<div class="household">
-                    <img class="icon" src="markers/${icon}" style="filter:hue-rotate(${value * 80}deg) brightness(${brightness})">
-                    <span class="label">${count.toFixed(0)}</span>
-                </div>`,
-                className: '',
-                iconSize: new L.Point(50, 50)
-            });
-        }
-    });
+        });
+    }
 
     //
     // marker rendering function
     //
 
     function renderAll(newHouseholds, newStores) {
-        householdLayer.clearLayers(); // Clear the existing households from the layer
+        const householdsClusterGroup = getNewHouseholdsClusterGroup();
 
         // render households
         //
