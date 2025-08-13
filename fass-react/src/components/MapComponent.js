@@ -245,7 +245,7 @@ export function initializeMap(mapId, households, stores) {
         }).addTo(layer).bindPopup(getHouseholdPopup(household));
     }
 
-    function renderHouseholds(households, layer, limit=100000) {
+    function renderHouseholds(households, layer, limit=0) {
         households.forEach((household, index) => {
             if (!limit || index < limit) {
                 renderHousehold(household, layer);
