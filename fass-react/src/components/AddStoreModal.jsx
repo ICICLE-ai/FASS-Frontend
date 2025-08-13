@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { StoreContext } from '../App';
 import { client } from "../shared/client.js";
+import { getSimulationInstanceId } from '../App';
 
 const AddStoreModal = ({ show, handleClose }) => {
     const {stores, setStores} = useContext(StoreContext)  
@@ -35,14 +36,16 @@ const AddStoreModal = ({ show, handleClose }) => {
       }
       console.log('Success:', response.data);
 
+      const params = new URLSearchParams();
+      params.append('simulation_instance', getSimulationInstanceId());
 
       try {
-        const response = await client.get('/stores');
+        const response = await client.get('/stores?' + params.toString());
         if (response.status !== 200) {
           console.error('Error fetching shared:', response.statusText);
         }
         console.log('Success:', response.data);
-        setStores(response.data.stores_json)
+        setStores(response.data.store_json)
       } catch (error) {
         console.error('Error fetching shared:', error);
       }
@@ -68,7 +71,7 @@ const AddStoreModal = ({ show, handleClose }) => {
       //       const storesResponse = await fetch(`${API_URL}/stores`);
       //       if (storesResponse.ok) {
       //         const storesData = await storesResponse.json();
-      //         setStores(storesData.stores_json); // Set the list of shared from the API response
+      //         setStores(storesData.store_json); // Set the list of shared from the API response
       //       } else {
       //         console.error('Error fetching shared:', storesResponse.statusText);
       //       }

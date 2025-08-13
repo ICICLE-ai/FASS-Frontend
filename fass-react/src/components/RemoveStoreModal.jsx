@@ -6,7 +6,8 @@ import {client} from "../shared/client.js";
 const headers = {
     'Content-Type': 'application/json',
 };
-//maybe display list of all shared instead?
+
+// maybe display list of all shared instead?
 const RemoveStoreModal = ({show, handleClose}) => {
     const {stores, setStores} = useContext(StoreContext)
     const [selectedStore, setSelectedStore] = useState('');

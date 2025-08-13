@@ -2,11 +2,8 @@ import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import RemoveStoreModal from './RemoveStoreModal';
 
-
 const RemoveStoreButton = () => {
-
     const [showModal, setShowModal] = useState(false);
-
     const handleClose = () => setShowModal(false);
     const handleShow = () => setShowModal(true);
 
@@ -21,4 +18,3 @@ const RemoveStoreButton = () => {
   };
   
   export default RemoveStoreButton;
-  

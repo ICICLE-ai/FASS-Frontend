@@ -1,0 +1,41 @@
+.leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow {
+	-webkit-transition: -webkit-transform 0.3s ease-out, opacity 0.3s ease-in;
+	-moz-transition: -moz-transform 0.3s ease-out, opacity 0.3s ease-in;
+	-o-transition: -o-transform 0.3s ease-out, opacity 0.3s ease-in;
+	transition: transform 0.3s ease-out, opacity 0.3s ease-in;
+}
+
+.leaflet-cluster-spider-leg {
+	/* stroke-dashoffset (duration and function) should match with leaflet-marker-icon transform in order to track it exactly */
+	-webkit-transition: -webkit-stroke-dashoffset 0.3s ease-out, -webkit-stroke-opacity 0.3s ease-in;
+	-moz-transition: -moz-stroke-dashoffset 0.3s ease-out, -moz-stroke-opacity 0.3s ease-in;
+	-o-transition: -o-stroke-dashoffset 0.3s ease-out, -o-stroke-opacity 0.3s ease-in;
+	transition: stroke-dashoffset 0.3s ease-out, stroke-opacity 0.3s ease-in;
+}
+
+.marker-cluster {
+	/* display: none !important; */
+}
+
+.household {
+	position: relative;
+	width: 30px;
+	height: 30px;
+	/* filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 50%)); */
+
+	.icon {
+		position: absolute;
+	    width: 100%;
+	    height: 100%;  
+	}
+
+	.label {
+		position: absolute;
+		width: 100%;
+		margin-top: 33%;
+	    text-align: center;
+	    color: white;
+	    font-weight: bold;
+	    font-size: 10px;
+	}
+}
