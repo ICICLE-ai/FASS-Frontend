@@ -100,8 +100,8 @@ export function initializeMap(mapId, households, stores) {
 
     function getMapIcon(iconUrl, shadowUrl) {
         return L.icon({
-            iconUrl: '/markers/' + iconUrl,
-            shadowUrl: '/markers/' + shadowUrl,
+            iconUrl: 'markers/' + iconUrl,
+            shadowUrl: 'markers/' + shadowUrl,
             iconSize:     [15, 15], // size of the icon
             shadowSize:   [30, 30], // size of the shadow
             iconAnchor:   [7.5, 7.5], // point of the icon which will correspond to marker's location
