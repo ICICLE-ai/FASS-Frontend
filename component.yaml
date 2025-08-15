@@ -4,6 +4,9 @@
     status: AlphaRelease
     website: https://fass.pods.icicleai.tapis.io
     primaryThrust: useInspired/SF
-    targetIcicleRelease: 2025-09
+    targetIcicleRelease: 2025-08
     componentVersion: 0.2
     licenseUrl: https://opensource.org/license/bsd-3-clause
+    description: Agent-based simulation model to evaluate food accessibility scores
+    sourceCodeUrl: https://github.com/ICICLE-ai/Food-Access-Model, https://github.com/ICICLE-ai/FASS-Frontend
+    containerImage: ghcr.io/icicle-ai/fass-front, ghcr.io/icicle-ai/fass-back
