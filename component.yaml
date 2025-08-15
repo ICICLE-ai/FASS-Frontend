@@ -1,0 +1,9 @@
+  - id: FASS:0.2
+    name: Food Access Strategy Simulator (FASS)
+    owner: Alfonso Morales
+    status: AlphaRelease
+    website: https://fass.pods.icicleai.tapis.io
+    primaryThrust: useInspired/SF
+    targetIcicleRelease: 2025-09
+    componentVersion: 0.2
+    licenseUrl: https://opensource.org/license/bsd-3-clause
