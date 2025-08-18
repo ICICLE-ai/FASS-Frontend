@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Spinner } from 'react-bootstrap';
 import { client} from "../shared/client.js";
-import { getSimulationInstanceId } from '../App';
+import { getSimulationInstanceId, getSimulationStep } from '../App';
 
 // const API_URL = import.meta.env.VITE_API_URL || "__API__URL__";
 const headers = {
@@ -20,7 +20,7 @@ const StepButton = ({updateStepNumber}) => {
                 throw new Error('Network response was not ok');
             }
             console.log(response.data);
-            updateStepNumber(response.data["step_number"]);
+            updateStepNumber(getSimulationStep() + 1);
             setLoading(false)
         })
         .catch(error => {
