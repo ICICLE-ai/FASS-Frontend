@@ -2,6 +2,7 @@ import React, {useState, useEffect, useContext} from 'react';
 import {Modal, Button, Form} from 'react-bootstrap';
 import {StoreContext} from '../App';
 import {client} from "../shared/client.js";
+import { getSimulationInstanceId, getStepNumber } from '../App';
 
 const headers = {
     'Content-Type': 'application/json',
@@ -15,7 +16,14 @@ const RemoveStoreModal = ({show, handleClose}) => {
     // Handle form submission to the backend using fetch
     const handleSubmit = async (e) => {
         e.preventDefault();
-        client.delete('/remove-store', {data: JSON.stringify(selectedStore), headers: headers})
+        let data = {
+            store_id: parseInt(selectedStore), 
+            simulation_instance_id: getSimulationInstanceId(),
+            simulation_step: getStepNumber(),
+        }
+        client.delete('/stores', {
+            params: data
+        })
             .then(response => {
                 if (response.status !== 200) {
                     throw new Error('Network response was not ok');
@@ -65,12 +73,14 @@ const RemoveStoreModal = ({show, handleClose}) => {
                         <Form.Select value={selectedStore} onChange={handleSelectChange}>
                             <option value="">--Select a store--</option>
                             {stores ? (stores.map((store, index) => (
-                                <option key={index} value={store[2]}>
-                                    {store[2]}
+                                <option key={index} value={store.store_id}>
+                                    {store.name}
                                 </option>
                             ))) : (<></>)}
                         </Form.Select>
                     </Form.Group>
+
+                    <br />
 
                     <Button variant="primary" type="submit">
                         Submit
