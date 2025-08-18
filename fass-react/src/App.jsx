@@ -308,6 +308,7 @@ const App = () => {
   }
 
   const updateStepNumber = (newStepNumber) => {
+      window.stepNumber = newStepNumber;
       setStepNumber(newStepNumber);
   };
 
