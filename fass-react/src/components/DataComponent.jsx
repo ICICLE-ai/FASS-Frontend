@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { StoreContext } from '../App';
 import { HouseholdContext } from '../App';
 import { client } from "../shared/client.js";
-import { hasSimulations, hasSimulationInstance, getSimulationInstanceId, getStepNumber } from '../App';
+import { hasSimulations, hasSimulationInstance, getSimulationInstanceId, getSimulationStep } from '../App';
 
 const DataComponent = () => {
     const {stepNumber, stores} = useContext(StoreContext)
@@ -25,7 +25,7 @@ const DataComponent = () => {
                 //
                 const params = new URLSearchParams();
                 params.append('simulation_instance_id', getSimulationInstanceId());
-                params.append('simulation_step', getStepNumber());
+                params.append('simulation_step', getSimulationStep());
 
                 const response = await client.get('/get-num-stores?' + params.toString());
                 setNumSPM(response.data.numSPM);
@@ -53,7 +53,7 @@ const DataComponent = () => {
             //
             const params = new URLSearchParams();
             params.append('simulation_instance_id', getSimulationInstanceId());
-            params.append('simulation_step', getStepNumber());
+            params.append('simulation_step', getSimulationStep());
 
             try {
                 const response = await client.get('/get-num-households?' + params.toString());
@@ -82,7 +82,7 @@ const DataComponent = () => {
                 //
                 const params = new URLSearchParams();
                 params.append('simulation_instance_id', getSimulationInstanceId());
-                params.append('simulation_step', getStepNumber());
+                params.append('simulation_step', getSimulationStep());
 
                 const response = await client.get('/get-household-stats?' + params.toString());
                 setAvgIncome(response.data.avg_income);

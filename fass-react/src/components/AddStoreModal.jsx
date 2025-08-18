@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { StoreContext } from '../App';
 import { client } from "../shared/client.js";
-import { getSimulationInstanceId } from '../App';
+import { getSimulationInstanceId, getSimulationStep } from '../App';
 
 const AddStoreModal = ({ show, handleClose }) => {
     const {stores, setStores} = useContext(StoreContext)  
@@ -30,7 +30,14 @@ const AddStoreModal = ({ show, handleClose }) => {
     e.preventDefault();
 
     try {
-      const response = await client.post('/add-store', formData);
+      const response = await client.post('/stores', {
+        name: formData.name,
+        category: formData.category,
+        longitude: formData.longitude,
+        latitude: formData.latitude,
+        simulation_instance_id: getSimulationInstanceId(),
+        simulation_step: getSimulationStep()
+      });
       if (response.status !== 200) {
         console.log('Error:', response.statusText);
       }
