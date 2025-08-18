@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext} from 'react';
 import {Modal, Button, Form} from 'react-bootstrap';
 import {StoreContext} from '../App';
 import {client} from "../shared/client.js";
-import { getSimulationInstanceId, getStepNumber } from '../App';
+import { getSimulationInstanceId, getSimulationStep } from '../App';
 
 const headers = {
     'Content-Type': 'application/json',
@@ -19,7 +19,7 @@ const RemoveStoreModal = ({show, handleClose}) => {
         let data = {
             store_id: parseInt(selectedStore), 
             simulation_instance_id: getSimulationInstanceId(),
-            simulation_step: getStepNumber(),
+            simulation_step: getSimulationStep(),
         }
         client.delete('/stores', {
             params: data

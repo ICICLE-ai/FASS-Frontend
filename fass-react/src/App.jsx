@@ -40,7 +40,7 @@ export function getSimulationInstanceId() {
   return value && value != ''? value : undefined;
 }
 
-export function getStepNumber() {
+export function getSimulationStep() {
   return window.stepNumber || 0;
 }
 
@@ -122,7 +122,7 @@ const App = () => {
     //
     const params = new URLSearchParams();
     params.append('simulation_instance', simulationInstanceId);
-    params.append('simulation_step', getStepNumber());
+    params.append('simulation_step', getSimulationStep());
 
     window.stores_request = client.get('/stores?' + params.toString())
       .then(response => {
@@ -148,7 +148,7 @@ const App = () => {
     //
     const params = new URLSearchParams();
     params.append('simulation_instance', simulationInstanceId);
-    params.append('simulation_step', getStepNumber());
+    params.append('simulation_step', getSimulationStep());
 
     showLoadingSpinner();
     return client.get('/households?' + params.toString())
