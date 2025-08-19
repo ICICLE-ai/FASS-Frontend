@@ -133,7 +133,7 @@ export function initializeMap(mapId, households, stores) {
         //
         const tr1 = document.createElement("tr");
         const td1 = document.createElement("td");
-        td1.textContent = `Name: ${store[2]}`;
+        td1.textContent = `Name: ${store.name}`;
         tr1.appendChild(td1);
         tbody.appendChild(tr1);
 
@@ -141,7 +141,7 @@ export function initializeMap(mapId, households, stores) {
         //
         const tr2 = document.createElement("tr");
         const td2 = document.createElement("td");
-        td2.textContent = `Type: ${store[0]}`;
+        td2.textContent = `Type: ${store.shop}`;
         tr2.appendChild(td2);
         tbody.appendChild(tr2);
 
