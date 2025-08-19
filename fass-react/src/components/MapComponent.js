@@ -311,6 +311,10 @@ export function initializeMap(mapId, households, stores) {
     function renderAll(newHouseholds, newStores) {
         const householdsClusterGroup = getNewHouseholdsClusterGroup();
 
+        // clear previous markers
+        //
+        clearAll();
+
         // render households
         //
         if (CLUSTER_HOUSEHOLDS) {
