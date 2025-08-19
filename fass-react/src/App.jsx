@@ -2,9 +2,9 @@ import React, { useEffect, useState, useRef, createContext } from 'react';
 import TopBar from './components/TopBar';
 import AddSimulationButton from './components/AddSimulationButton';
 import RemoveSimulationButton from './components/RemoveSimulationButton';
+import ResetButton from './components/ResetButton';
 import AddStoreButton from './components/AddStoreButton';
 import RemoveStoreButton from './components/RemoveStoreButton';
-import ResetButton from './components/ResetButton';
 import ReportButton from './components/ReportButton';
 import StepButton from './components/StepButton';
 import { initializeMap } from './components/MapComponent';
@@ -423,6 +423,7 @@ const App = () => {
                       </div>
                       <AddSimulationButton />
                       <RemoveSimulationButton />
+                      <ResetButton/>
                     </div>
 
                     <br />
@@ -432,7 +433,6 @@ const App = () => {
                       <AddStoreButton />
                       <RemoveStoreButton />
                       <StepButton updateStepNumber={updateStepNumber} />
-                      <ResetButton/>
                     </div>
                 </div>
 
