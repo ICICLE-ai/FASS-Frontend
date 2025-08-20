@@ -1,7 +1,7 @@
 import React from 'react';
 import {createRoot} from 'react-dom/client'
 import { Modal, Button, Form } from 'react-bootstrap';
-import Markdown from 'react-markdown';
+// import Markdown from 'react-markdown';
 
 const HelpModal = ({ show, handleClose }) => {
 
@@ -100,7 +100,10 @@ const HelpModal = ({ show, handleClose }) => {
         <Modal.Title>Help</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Markdown>{markdown}</Markdown>
+        {/* <Markdown>{markdown}</Markdown> */}
+        <pre>
+        {markdown}
+      </pre>
       </Modal.Body>
     </Modal>
   );
