@@ -16,7 +16,7 @@ const ResetButton = () => {
         })
         .then(response => {
             console.log(response.data);
-            updateSimulations();
+            updateStepNumber(0);
         })
         .catch(error => {
             console.error('Error with reset function:', error);
