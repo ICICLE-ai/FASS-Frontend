@@ -72,7 +72,9 @@ const RemoveStoreModal = ({show, handleClose}) => {
                         <Form.Label>Choose a store:</Form.Label>
                         <Form.Select value={selectedStore} onChange={handleSelectChange}>
                             <option value="">--Select a store--</option>
-                            {stores ? (stores.map((store, index) => (
+                            {stores ? (stores.sort((a, b) => {
+                                    return a.name.localeCompare(b.name);
+                                }).map((store, index) => (
                                 <option key={index} value={store.store_id}>
                                     {store.name}
                                 </option>
