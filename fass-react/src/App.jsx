@@ -331,8 +331,12 @@ const App = () => {
 
       // load new simulation data
       //
-      loadStores(simulationInstanceId);
-      loadHouseholds(simulationInstanceId);
+      loadStepNumber(simulationInstanceId, {
+        success: () => {
+          loadStores(simulationInstanceId);
+          loadHouseholds(simulationInstanceId);
+        }
+      });
     } else {
       loadSimulationInstances({
         success: () => {
@@ -348,13 +352,15 @@ const App = () => {
          let simulationInstanceId = getSimulationInstanceId();
          if (simulationInstanceId) {
           updateSimulation(simulationInstanceId);
-          loadStepNumber(simulationInstanceId);
         }
       }
     });
   }
 
-  window.updateSimulations = updateSimulations;
+  // export functions
+  //
+  window.updateStepNumber = updateStepNumber;
+  window.updateCurrentSimulation = updateCurrentSimulation;
 
   //
   // react callbacks
