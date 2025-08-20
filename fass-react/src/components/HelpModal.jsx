@@ -12,17 +12,15 @@ const HelpModal = ({ show, handleClose }) => {
   };
 
   const markdown = `
+## Introduction
+
+The Food Access and Strategy Simulation tool is a powerful resource for analyzing and simulating the effects of adding or removing stores on household food access. This guide provides clear, step-by-step instructions to help you navigate and utilize the tool effectively.
+
 ## Example Use Case
 
 1. Add a Store: Place a new supermarket in an underserved area—for example, add "Charlie’s Market" to a park location.
 2. Simulate: Step through multiple months to observe how the addition improves food access, particularly for households without vehicles.
 3. Remove a Store: Remove "Charlie’s Market" and/or surrounding stores and examine how food access challenges re-emerge in the affected area.
-
-# Explanation
-
-## Introduction
-
-The Food Access and Strategy Simulation tool is a powerful resource for analyzing and simulating the effects of adding or removing stores on household food access. This guide provides clear, step-by-step instructions to help you navigate and utilize the tool effectively.
 
 ## Key Features of the Interface
 
