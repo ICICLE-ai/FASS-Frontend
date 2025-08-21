@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import AddStoreModal from './AddStoreModal';
+import RemoveSimulationModal from './RemoveSimulationModal';
 
-const AddStoreButton = () => {
+const RemoveSimulationButton = () => {
     const [showModal, setShowModal] = useState(false);
     const handleClose = () => setShowModal(false);
     const handleShow = () => setShowModal(true);
@@ -10,11 +10,11 @@ const AddStoreButton = () => {
     return (
       <>
        <Button variant="primary" onClick={handleShow}>
-        Add Store
+        Remove Simulation
         </Button>
-        <AddStoreModal show={showModal} handleClose={handleClose} />
+        <RemoveSimulationModal show={showModal} handleClose={handleClose} />
       </>
     );
   };
   
-  export default AddStoreButton;
+  export default RemoveSimulationButton;
