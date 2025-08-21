@@ -1,19 +1,10 @@
-
 <h3 align="center">FASS-Frontend for Profiling</h3>
-
- 
 </div>
-
-
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
 Frontend for FASS built with React.
-
-
-
-
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -25,29 +16,30 @@ Ensure you have the latest versions of nvm and npm, visit [https://nodejs.org/en
 
 ### Installation
 
-1. Switch to staging branch (reflects most up-to-date changes as of 2/1/25)
+1. Switch to the appropriate branch
+If you are running the application locally, then switch to the "reduced_household_request" branch.  If you are running the application in a production environment, then switch to the "staging" branch.
 ```sh
-  git checkout staging 
+  git checkout reduced_household_request 
   ``` 
+
 2. Change directory to fass-react
 ```sh
   cd fass-react 
   ```
+
 3.  Run npm install for node dependencies
  ```sh
   npm install 
   ``` 
+
 4. Navigate to client.js 
 ```sh
  cd src
  cd shared
  nano client.js #any code editor is fine
  ```
+
 5. Change line 3 of client.js to baseURL: 'http://127.0.0.1:8000/api'. (this is assuming you have the backend running locally at localhost)
-
-
-
-
 
 <!-- USAGE EXAMPLES -->
 ## Usage
@@ -56,11 +48,6 @@ Ensure you have the latest versions of nvm and npm, visit [https://nodejs.org/en
   npm run dev
   ```
 2. For more information on usage, please read this [User Guide](assets/FASS_User_Guide.pdf)
-
-
-
-
-
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
