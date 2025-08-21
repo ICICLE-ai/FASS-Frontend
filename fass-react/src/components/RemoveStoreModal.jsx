@@ -16,45 +16,29 @@ const RemoveStoreModal = ({show, handleClose}) => {
     // Handle form submission to the backend using fetch
     const handleSubmit = async (e) => {
         e.preventDefault();
-        let data = {
-            store_id: parseInt(selectedStore), 
-            simulation_instance_id: getSimulationInstanceId(),
-            simulation_step: getSimulationStep(),
-        }
-        client.delete('/stores', {
-            params: data
-        })
-            .then(response => {
+
+        try {
+            client.delete('/stores', {
+                params: {
+                    store_id: parseInt(selectedStore), 
+                    simulation_instance_id: getSimulationInstanceId(),
+                    simulation_step: getSimulationStep(),
+                }
+            }).then(response => {
                 if (response.status !== 200) {
                     throw new Error('Network response was not ok');
                 }
+
                 // Successful response
                 console.log('Success:', response.data);
                 setStores(response.data.store_json);
                 handleClose();
             }).catch(error => {
-            console.error('Error with remove-store function:', error);
-        });
-        //   try {
-        //     const response = await fetch(`${API_URL}remove-store`, {
-        //       method: 'DELETE', //delete store
-        //       headers: {
-        //         'Content-Type': 'application/json',
-        //       },
-        //       body: JSON.stringify(selectedStore),
-        //     });
-        //
-        //     if (response.ok) {
-        //       const responseData = await response.json();
-        //       console.log('Success:', responseData);
-        //       setStores(responseData.store_json)
-        //       handleClose();  // Close modal on successful submission
-        //     } else {
-        //       console.error('Error:', response.statusText);
-        //     }
-        //   } catch (error) {
-        //     console.error('Error removing object:', error);
-        //   }
+                console.error('Error with remove-store function:', error);
+            });
+        } catch (error) {
+          console.error('Error adding store:', error);
+        }
     };
 
     const handleSelectChange = (event) => {
