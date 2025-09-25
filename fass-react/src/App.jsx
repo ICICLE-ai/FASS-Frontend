@@ -63,6 +63,8 @@ const App = () => {
   const renderHouseholdsRef = useRef(null); // Reference for render_households function
   const [showAddStoreModal, setShowAddStoreModal] = useState(false);
   const [modalCoordinates, setModalCoordinates] = useState(null);
+  const [isAddStoreMode, setIsAddStoreMode] = useState(false);
+  const addStoreModeRef = useRef(false);
 
   // Modal handler functions
   const handleOpenAddStoreModal = (coordinates = null) => {
@@ -73,6 +75,21 @@ const App = () => {
   const handleCloseAddStoreModal = () => {
     setShowAddStoreModal(false);
     setModalCoordinates(null);
+  };
+
+  const enterAddStoreMode = () => {
+    setIsAddStoreMode(true);
+    addStoreModeRef.current = true;
+  };
+
+  const exitAddStoreMode = () => {
+    setIsAddStoreMode(false);
+    addStoreModeRef.current = false;
+    // reset cursor
+    const mapEl = document.querySelector('.leaflet-container');
+    if (mapEl) {
+      mapEl.style.removeProperty('cursor');
+    }
   };
 
   function toTitleCase(str) {
@@ -411,13 +428,15 @@ const App = () => {
 
       
       map.on('click', function(e) {
-        const mapEl = map.getContainer?.() || document.querySelector('.leaflet-container');
-        mapEl?.style.removeProperty('cursor');  
-        // Open the Add Store modal with the new map click coordinates
-        handleOpenAddStoreModal({
-          lat: e.latlng.lat,
-          lng: e.latlng.lng
-        });
+        // only if in Add Store Mode
+        if (addStoreModeRef.current) {
+          exitAddStoreMode(); // exit Add Store Mode
+          // open the Add Store modal with the relevant lat long
+          handleOpenAddStoreModal({
+            lat: e.latlng.lat,
+            lng: e.latlng.lng
+          });
+        }
       });
     
     }
@@ -462,7 +481,10 @@ const App = () => {
 
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">Features</h3>
                     <div className="space-y-4 flex flex-col items-center">
-                      <AddStoreButton onOpenModal={handleOpenAddStoreModal} />
+                      <AddStoreButton 
+                        enterAddStoreMode={enterAddStoreMode}
+                        isAddStoreMode={isAddStoreMode}
+                      />
                       <RemoveStoreButton />
                       <StepButton updateStepNumber={updateStepNumber} />
                     </div>

@@ -1,21 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Toast, ToastContainer } from 'react-bootstrap';
 
-const AddStoreButton = () => {
+const AddStoreButton = ({ enterAddStoreMode, isAddStoreMode }) => {
     const [showToast, setShowToast] = useState(false);
     
+    // hide the toast when leave Add Store Mode
+    useEffect(() => {
+        if (!isAddStoreMode) {
+            setShowToast(false);
+        }
+    }, [isAddStoreMode]);
+    
     const handleClick = () => {
-        setShowToast(true);
-        
-        const mapEl = map.getContainer?.() || document.querySelector('.leaflet-container');
-
-        // set custom cursor on the actual map element
-        mapEl?.style.setProperty(
-            'cursor',
-            'url("http://wiki-devel.sugarlabs.org/images/e/e2/Arrow.cur") 0 0, crosshair',
-            'important'
-        );
-
+        if (!isAddStoreMode) {
+            // enter Add Store Mode
+            enterAddStoreMode();
+            setShowToast(true);
+            
+            const mapEl = document.querySelector('.leaflet-container');
+            // set custom cursor 
+            if (mapEl) {
+                mapEl.style.setProperty(
+                    'cursor',
+                    'url("http://wiki-devel.sugarlabs.org/images/e/e2/Arrow.cur") 0 0, crosshair',
+                    'important'
+                );
+            }
+        }
     };
 
     return (
