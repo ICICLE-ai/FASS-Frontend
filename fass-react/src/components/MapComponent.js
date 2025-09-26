@@ -3,6 +3,8 @@ import 'leaflet/dist/leaflet.css';
 import proj4 from 'proj4';
 import 'proj4leaflet';
 import '../../markercluster/leaflet.markercluster-src.js'
+import {client} from "/src/shared/client.js";
+import {getSimulationInstanceId, getSimulationStep} from "/src/App.jsx?t=1758562847100";
 
 export function initializeMap(mapId, households, stores) {
 
@@ -145,6 +147,42 @@ export function initializeMap(mapId, households, stores) {
         tr2.appendChild(td2);
         tbody.appendChild(tr2);
 
+        // create third row (remove button)
+        //
+        const tr3 = document.createElement("tr");
+        const td3 = document.createElement("td");
+        const button = document.createElement("button");
+        button.textContent = "Remove Store";
+        button.style.padding = "8px 8px";
+        button.style.color = "white";
+        button.style.cursor = "pointer";
+        button.style.backgroundColor = "#0d6efd";
+        button.style.marginTop = "10px";
+        button.style.marginBottom = "10px";
+        button.style.borderRadius = "6px";
+
+        button.addEventListener("click", () => {
+            try {
+                client.delete('/stores', {
+                    params: {
+                    store_id: store.store_id, 
+                    simulation_instance_id: getSimulationInstanceId(),
+                    simulation_step: getSimulationStep(),
+                    }
+                })
+                .then(response => {
+                    console.log('Store removed:', store.name);
+                    window.location.reload();
+                })
+            } 
+            catch(error) {
+                console.error('Error removing store:', error);
+            };
+        });
+        td3.appendChild(button);
+        tr3.appendChild(td3);
+        tbody.appendChild(tr3);
+
         table.appendChild(tbody);
         return table;
     }
@@ -160,10 +198,10 @@ export function initializeMap(mapId, households, stores) {
         L.marker(position, {icon: icon}).addTo(layer).bindPopup(getStorePopup(store));
     }
 
-    function renderStores(stores, layer, limit=0) {
+    function renderStores(stores, layer, households, limit=0) {
         stores.forEach((store, index) => {
             if (!limit || index < limit) {
-                renderStore(store, layer);
+                renderStore(store, layer, households);
             }
         });
     }
