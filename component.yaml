@@ -1,11 +1,11 @@
-  - id: FASS:0.2
-    name: Food Access Strategy Simulator (FASS)
+  - id: FEAST:0.3
+    name: Food Equity Access Simulation Technology (FEAST)
     owner: Alfonso Morales
     status: AlphaRelease
     website: https://fass.pods.icicleai.tapis.io
     primaryThrust: useInspired/SF
-    targetIcicleRelease: 2025-08
-    componentVersion: 0.2
+    targetIcicleRelease: 2025-10
+    componentVersion: 0.3
     licenseUrl: https://opensource.org/license/bsd-3-clause
     description: Agent-based simulation model to evaluate food accessibility scores
     sourceCodeUrl: https://github.com/ICICLE-ai/Food-Access-Model, https://github.com/ICICLE-ai/FASS-Frontend
