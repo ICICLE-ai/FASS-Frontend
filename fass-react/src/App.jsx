@@ -4,6 +4,7 @@ import AddSimulationButton from './components/AddSimulationButton';
 import RemoveSimulationButton from './components/RemoveSimulationButton';
 import ResetButton from './components/ResetButton';
 import AddStoreButton from './components/AddStoreButton';
+import AddStoreModal from './components/AddStoreModal';
 import RemoveStoreButton from './components/RemoveStoreButton';
 import ReportButton from './components/ReportButton';
 import StepButton from './components/StepButton';
@@ -60,6 +61,36 @@ const App = () => {
   const [stepNumber, setStepNumber] = useState(0);
   const mapRef = useRef(null); // Store the map instance
   const renderHouseholdsRef = useRef(null); // Reference for render_households function
+  const [showAddStoreModal, setShowAddStoreModal] = useState(false);
+  const [modalCoordinates, setModalCoordinates] = useState(null);
+  const [isAddStoreMode, setIsAddStoreMode] = useState(false);
+  const addStoreModeRef = useRef(false);
+
+  // Modal handler functions
+  const handleOpenAddStoreModal = (coordinates = null) => {
+    setModalCoordinates(coordinates);
+    setShowAddStoreModal(true);
+  };
+
+  const handleCloseAddStoreModal = () => {
+    setShowAddStoreModal(false);
+    setModalCoordinates(null);
+  };
+
+  const enterAddStoreMode = () => {
+    setIsAddStoreMode(true);
+    addStoreModeRef.current = true;
+  };
+
+  const exitAddStoreMode = () => {
+    setIsAddStoreMode(false);
+    addStoreModeRef.current = false;
+    // reset cursor
+    const mapEl = document.querySelector('.leaflet-container');
+    if (mapEl) {
+      mapEl.style.removeProperty('cursor');
+    }
+  };
 
   function toTitleCase(str) {
     return str.replace(
@@ -394,6 +425,20 @@ const App = () => {
       mapRef.clear = clear;
       mapRef.clearAll = clearAll;
       renderHouseholdsRef.current = renderAll;
+
+      
+      map.on('click', function(e) {
+        // only if in Add Store Mode
+        if (addStoreModeRef.current) {
+          exitAddStoreMode(); // exit Add Store Mode
+          // open the Add Store modal with the relevant lat long
+          handleOpenAddStoreModal({
+            lat: e.latlng.lat,
+            lng: e.latlng.lng
+          });
+        }
+      });
+    
     }
   }, []);
 
@@ -436,7 +481,10 @@ const App = () => {
 
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">Features</h3>
                     <div className="space-y-4 flex flex-col items-center">
-                      <AddStoreButton />
+                      <AddStoreButton 
+                        enterAddStoreMode={enterAddStoreMode}
+                        isAddStoreMode={isAddStoreMode}
+                      />
                       <RemoveStoreButton />
                       <StepButton updateStepNumber={updateStepNumber} />
                     </div>
@@ -458,6 +506,13 @@ const App = () => {
             </div>
             </div>
             <h1>Copyright</h1>
+        
+        {/* Add Store Modal */}
+        <AddStoreModal 
+          show={showAddStoreModal} 
+          handleClose={handleCloseAddStoreModal}
+          initialCoordinates={modalCoordinates}
+        />
       </HouseholdContext.Provider>
     </StoreContext.Provider>
   );

@@ -1,17 +1,41 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { StoreContext } from '../App';
 import { client } from "../shared/client.js";
 import { getSimulationInstanceId, getSimulationStep } from '../App';
 
-const AddStoreModal = ({ show, handleClose }) => {
+const AddStoreModal = ({ show, handleClose, initialCoordinates = null }) => {
     const { stores, setStores } = useContext(StoreContext)
     const [formData, setFormData] = useState({
         name: '',
         category: '',
-        latitude: '',
-        longitude: '',
+        latitude: initialCoordinates ? initialCoordinates.lat.toString() : '',
+        longitude: initialCoordinates ? initialCoordinates.lng.toString() : '',
     }); //ideally could have users add in an address but this is fine for MVP
+
+    // Update data when initialCoordinates change
+    useEffect(() => {
+        if (initialCoordinates) {
+            setFormData(prevData => ({
+                // keeps copy
+                ...prevData,
+                latitude: initialCoordinates.lat.toString(),
+                longitude: initialCoordinates.lng.toString()
+            }));
+        }
+    }, [initialCoordinates]);
+
+    // Reset when modal is closed
+    useEffect(() => {
+        if (!show) {
+            setFormData({
+                name: '',
+                category: '',
+                latitude: '',
+                longitude: ''
+            });
+        }
+    }, [show]);
 
     // Handle input changes
     const handleChange = (e) => {
