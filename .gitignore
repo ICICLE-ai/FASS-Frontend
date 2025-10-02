@@ -134,3 +134,6 @@ dist
 package.json
 package-lock.json
 .gitignore
+
+# local config settings
+fass-react/src/shared/client.js
