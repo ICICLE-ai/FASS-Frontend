@@ -172,7 +172,11 @@ export function initializeMap(mapId, households, stores) {
                 })
                 .then(response => {
                     console.log('Store removed:', store.name);
-                    window.location.reload();
+
+                    // update map
+                    //
+                    window.stores = response.data.store_json;
+                    rerender();
                 })
             } 
             catch(error) {
@@ -353,6 +357,11 @@ export function initializeMap(mapId, households, stores) {
         //
         clearAll();
 
+        // update references to households and stores
+        //
+        window.households = newHouseholds;
+        window.stores = newStores;
+
         // render households
         //
         if (CLUSTER_HOUSEHOLDS) {
@@ -373,7 +382,17 @@ export function initializeMap(mapId, households, stores) {
         }
     }
 
+    function rerender() {
+        clear();
+        renderAll(window.households, window.stores);
+    }
+
     clear();
+
+    // store references to households and stores
+    //
+    window.households = households;
+    window.stores = stores;
 
     // Render the initial households and stores
     //
