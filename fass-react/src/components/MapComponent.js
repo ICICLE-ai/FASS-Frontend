@@ -78,6 +78,7 @@ export function initializeMap(mapId, households, stores) {
         red_house: getMapIcon('house-red.svg', 'shadow.svg')
     };
 
+    //
     // rendering functions
     //
 
@@ -198,22 +199,7 @@ export function initializeMap(mapId, households, stores) {
 
         // add marker to layer
         //
-        const marker = L.marker(position, {icon: icon}).addTo(layer).bindPopup(getStorePopup(store));
-        // Keep trach of each store's highlight state and ID for future reference
-        marker.isHighlighted = false;
-        marker.storeId = store.store_id;
-
-        // When clicked, toggle highlight state and update marker highlighting on map
-        marker.on('click', () => {
-            marker.isHighlighted = !marker.isHighlighted;
-            if(marker.getElement()) {
-                marker.getElement().style.filter = marker.isHighlighted ? 'drop-shadow(0 0 0px red) drop-shadow(0 0 0px red) drop-shadow(0 0 0px red)' : '';
-            }
-        });
-
-        // Store the markers in window
-        window.storeMarkers = window.storeMarkers || [];
-        window.storeMarkers.push(marker);
+        L.marker(position, {icon: icon}).addTo(layer).bindPopup(getStorePopup(store));
     }
 
     function deleteHighlightedStores() {
