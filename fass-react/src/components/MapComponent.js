@@ -258,9 +258,11 @@ export function initializeMap(mapId, households, stores) {
         return false;
     }
 
+    // Get only the highlighted store markers
     const highlighted = window.storeMarkers.filter(m => m.isHighlighted);
     if (highlighted.length === 0) return false;
 
+    // Confirmation popup
     const confirmed = window.confirm(`Would you like to delete these ${highlighted.length} store(s)?`);
     if (!confirmed) return false;
 
@@ -269,7 +271,7 @@ export function initializeMap(mapId, households, stores) {
     return true;
     }
 
-    // Alloe React to call this function in the RemoveStoreButton component
+    // Allow React to call this function in the RemoveStoreButton component
     window.handleRemoveStores = handleRemoveStores;
 
     function renderStores(stores, layer, households, limit=0) {
