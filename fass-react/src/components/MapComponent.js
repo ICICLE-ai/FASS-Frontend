@@ -172,10 +172,24 @@ export function initializeMap(mapId, households, stores) {
                 .then(response => {
                     console.log('Store removed:', store.name);
 
+                    // Make sure to untrack the store removed via popup (don't include as a highlighted marker)
+                    const highlightedStores = window.storeMarkers.filter(marker => marker.isHighlighted);
+                    highlightedStores.forEach(marker => {
+                        const storeID = marker.storeId;
+                        if(storeID === store.store_id) {
+                            // Remove the marker from the map
+                            map.removeLayer(marker);
+
+                            // Remove marker from storeMarkers array
+                            const index = window.storeMarkers.indexOf(marker);
+                            if (index > -1) window.storeMarkers.splice(index, 1);
+                       }
+                    });
+
                     // update map
                     //
                     window.stores = response.data.store_json;
-                    rerender();
+                    //rerender();
                 })
             } 
             catch(error) {
@@ -218,7 +232,7 @@ export function initializeMap(mapId, households, stores) {
 
     function deleteHighlightedStores() {
         // Get only the highlighted store markers
-        const highlightedStores = storeMarkers.filter(marker => marker.isHighlighted);
+        const highlightedStores = window.storeMarkers.filter(marker => marker.isHighlighted);
 
         // Run backend delete for each highlighted store
         highlightedStores.forEach(marker => {
@@ -237,8 +251,8 @@ export function initializeMap(mapId, households, stores) {
                 map.removeLayer(marker);
 
                 // Remove marker from storeMarkers array
-                const index = storeMarkers.indexOf(marker);
-                if (index > -1) storeMarkers.splice(index, 1);
+                const index = window.storeMarkers.indexOf(marker);
+                if (index > -1) window.storeMarkers.splice(index, 1);
 
                 // Update frontend store list
                 window.stores = response.data.store_json;
@@ -253,22 +267,22 @@ export function initializeMap(mapId, households, stores) {
     }
 
     function handleRemoveStores() {
-    if (!window.storeMarkers) {
-        console.warn('No store markers found.');
-        return false;
-    }
+        if (!window.storeMarkers) {
+            console.warn('No store markers found.');
+            return false;
+        }
 
-    // Get only the highlighted store markers
-    const highlighted = window.storeMarkers.filter(m => m.isHighlighted);
-    if (highlighted.length === 0) return false;
+        // Get only the highlighted store markers
+        const highlighted = window.storeMarkers.filter(m => m.isHighlighted);
+        if (highlighted.length === 0) return false;
 
-    // Confirmation popup
-    const confirmed = window.confirm(`Would you like to delete these ${highlighted.length} store(s)?`);
-    if (!confirmed) return false;
+        // Confirmation popup
+        const confirmed = window.confirm(`Would you like to delete these ${highlighted.length} store(s)?`);
+        if (!confirmed) return false;
 
-    // Call the existing delete logic
-    deleteHighlightedStores();
-    return true;
+        // Call the existing delete logic
+        deleteHighlightedStores();
+        return true;
     }
 
     // Allow React to call this function in the RemoveStoreButton component
