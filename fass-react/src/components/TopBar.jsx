@@ -13,7 +13,7 @@ const TopBar = () => {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
       </Navbar.Collapse>
-      <Button onClick={handleShow}>Help</Button>
+      <Button onClick={() => window.open('https://foodaccesssimulator.org', '_blank')}>Help</Button>
       <HelpModal show={showModal} handleClose={handleClose} />
     </Navbar>
   );
