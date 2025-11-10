@@ -78,7 +78,6 @@ export function initializeMap(mapId, households, stores) {
         red_house: getMapIcon('house-red.svg', 'shadow.svg')
     };
 
-    //
     // rendering functions
     //
 
@@ -173,10 +172,24 @@ export function initializeMap(mapId, households, stores) {
                 .then(response => {
                     console.log('Store removed:', store.name);
 
+                    // Make sure to untrack the store removed via popup (don't include as a highlighted marker)
+                    const highlightedStores = window.storeMarkers.filter(marker => marker.isHighlighted);
+                    highlightedStores.forEach(marker => {
+                        const storeID = marker.storeId;
+                        if(storeID === store.store_id) {
+                            // Remove the marker from the map
+                            map.removeLayer(marker);
+
+                            // Remove marker from storeMarkers array
+                            const index = window.storeMarkers.indexOf(marker);
+                            if (index > -1) window.storeMarkers.splice(index, 1);
+                       }
+                    });
+
                     // update map
                     //
                     window.stores = response.data.store_json;
-                    rerender();
+                    //rerender();
                 })
             } 
             catch(error) {
@@ -190,7 +203,7 @@ export function initializeMap(mapId, households, stores) {
         table.appendChild(tbody);
         return table;
     }
-
+    
     function renderStore(store, layer) {
         const array = parsePolygon(store.geometry);
         const point = array[0];
@@ -199,8 +212,81 @@ export function initializeMap(mapId, households, stores) {
 
         // add marker to layer
         //
-        L.marker(position, {icon: icon}).addTo(layer).bindPopup(getStorePopup(store));
+        const marker = L.marker(position, {icon: icon}).addTo(layer).bindPopup(getStorePopup(store));
+        // Keep trach of each store's highlight state and ID for future reference
+        marker.isHighlighted = false;
+        marker.storeId = store.store_id;
+
+        // When clicked, toggle highlight state and update marker highlighting on map
+        marker.on('click', () => {
+            marker.isHighlighted = !marker.isHighlighted;
+            if(marker.getElement()) {
+                marker.getElement().style.filter = marker.isHighlighted ? 'drop-shadow(0 0 0px red) drop-shadow(0 0 0px red) drop-shadow(0 0 0px red)' : '';
+            }
+        });
+
+        // Store the markers in window
+        window.storeMarkers = window.storeMarkers || [];
+        window.storeMarkers.push(marker);
     }
+
+    function deleteHighlightedStores() {
+        // Get only the highlighted store markers
+        const highlightedStores = window.storeMarkers.filter(marker => marker.isHighlighted);
+
+        // Run backend delete for each highlighted store
+        highlightedStores.forEach(marker => {
+            const storeID = marker.storeId;
+            client.delete('/stores', {
+                params: {
+                    store_id: storeID,
+                    simulation_instance_id: getSimulationInstanceId(),
+                    simulation_step: getSimulationStep(),
+                }
+            })
+            .then(response => {
+                console.log('Stores removed:', highlightedStores.length);
+                
+                // Remove the marker from the map
+                map.removeLayer(marker);
+
+                // Remove marker from storeMarkers array
+                const index = window.storeMarkers.indexOf(marker);
+                if (index > -1) window.storeMarkers.splice(index, 1);
+
+                // Update frontend store list
+                window.stores = response.data.store_json;
+
+                // update map
+                rerender();
+            })
+            .catch(error => {
+                console.error('Error removing store:', error);
+            });
+        });
+    }
+
+    function handleRemoveStores() {
+        if (!window.storeMarkers) {
+            console.warn('No store markers found.');
+            return false;
+        }
+
+        // Get only the highlighted store markers
+        const highlighted = window.storeMarkers.filter(m => m.isHighlighted);
+        if (highlighted.length === 0) return false;
+
+        // Confirmation popup
+        const confirmed = window.confirm(`Would you like to delete these ${highlighted.length} store(s)?`);
+        if (!confirmed) return false;
+
+        // Call the existing delete logic
+        deleteHighlightedStores();
+        return true;
+    }
+
+    // Allow React to call this function in the RemoveStoreButton component
+    window.handleRemoveStores = handleRemoveStores;
 
     function renderStores(stores, layer, households, limit=0) {
         stores.forEach((store, index) => {
