@@ -370,7 +370,7 @@ export function initializeMap(mapId, households, stores) {
             "Number of Workers",
             "Stores within 1 Mile",
             "Closest Store (Miles)",
-            "Transit time",
+            // "Transit time", --> removed until implemented
             "Food Access Score"
         ];
 
