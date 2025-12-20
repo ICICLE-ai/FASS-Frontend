@@ -20,6 +20,12 @@ const StepButton = ({updateStepNumber}) => {
                 throw new Error('Network response was not ok');
             }
             console.log(response.data);
+
+            // reset highlight state
+            window.storeMarkers?.forEach(marker => {
+              marker.isHighlighted = false;
+            });
+
             updateStepNumber(getSimulationStep() + 1);
             setLoading(false)
         })

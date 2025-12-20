@@ -415,6 +415,7 @@ const App = () => {
     let simulationInstanceId = getSimulationInstanceId();
     if (simulationInstanceId) {
       loadHouseholds(simulationInstanceId);
+      loadStores(simulationInstanceId);
     }
   }, [stepNumber]);
 
