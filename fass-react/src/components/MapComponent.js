@@ -13,7 +13,7 @@ export function initializeMap(mapId, households, stores) {
         dragging: true,
         touchZoom: true,
         tap: true
-    }).setView([39.938806, -82.972361], 13);
+    }).setView([44.519356, -88.019826], 11); // Brown County, Wisconsin (Green Bay area)
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,

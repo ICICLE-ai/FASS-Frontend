@@ -116,8 +116,8 @@ const DataComponent = () => {
     <div>
         <b>Step: {stepNumber}</b>
         <p></p>
-        <p>State: Ohio</p>
-        <p>County: Franklin</p>
+        <p>State: Wisconsin</p>
+        <p>County: Brown</p>
         <p>Household Count: {numHouseholds}</p>
         <p>Number of Supermarkets: {numSPM}</p>
         <p>Number of Convenience: {numNonSPM}</p>
