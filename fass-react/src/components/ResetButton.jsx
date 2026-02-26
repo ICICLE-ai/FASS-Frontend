@@ -16,7 +16,15 @@ const ResetButton = () => {
         })
         .then(response => {
             console.log(response.data);
-            updateStepNumber(0);
+            // update step number via global App handler and refresh simulations
+            if (window.updateStepNumber) {
+                window.updateStepNumber(0);
+            }
+            try {
+                updateSimulations();
+            } catch (e) {
+                console.error('Error updating simulations after reset:', e);
+            }
         })
         .catch(error => {
             console.error('Error with reset function:', error);
