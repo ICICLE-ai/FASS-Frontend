@@ -205,9 +205,9 @@ export function initializeMap(mapId, households, stores) {
     }
     
     function renderStore(store, layer) {
-        const array = parsePolygon(store.geometry);
-        const point = array[0];
-        const position = proj4(EPSG3857, EPSG4326, point).reverse();
+        // const array = parsePolygon(store.geometry);
+        // const point = array[0];
+        const position = [store.x, store.y].reverse();
         const icon = getStoreIcon(store.shop);
 
         // add marker to layer
@@ -388,7 +388,8 @@ export function initializeMap(mapId, households, stores) {
     }
 
     function renderHousehold(household, layer) {
-        const position = projectToEPSG4326([parsePoint(household["Geometry"])]);
+        const [lon, lat] = parsePoint(household["Geometry"]);
+        const position = [[lat, lon]];
         const icon = getHouseholdIcon(household);
 
         // add marker to layer
