@@ -205,9 +205,19 @@ export function initializeMap(mapId, households, stores) {
     }
     
     function renderStore(store, layer) {
-        const array = parsePolygon(store.geometry);
-        const point = array[0];
-        const position = proj4(EPSG3857, EPSG4326, point).reverse();
+        let position;
+        if (store.x !== undefined && store.y !== undefined) {
+        // New format: x/y are 4326 coordinates
+            position = [store.y, store.x]; // Leaflet expects [lat, lng]
+        } else {
+        // Old format: geometry is a WKT point in 3857 coordinates
+            const array = parsePolygon(store.geometry);
+            const centroid = array.reduce(
+                (acc, coord) => [acc[0] + coord[0] / array.length, acc[1] + coord[1] / array.length],
+                [0, 0]
+            );
+            position = proj4("EPSG:3857", "EPSG:4326", centroid).reverse();
+        }
         const icon = getStoreIcon(store.shop);
 
         // add marker to layer
@@ -388,7 +398,8 @@ export function initializeMap(mapId, households, stores) {
     }
 
     function renderHousehold(household, layer) {
-        const position = projectToEPSG4326([parsePoint(household["Geometry"])]);
+        const [lon, lat] = parsePoint(household["Geometry"]);
+        const position = [[lat, lon]];
         const icon = getHouseholdIcon(household);
 
         // add marker to layer
