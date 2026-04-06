@@ -49,7 +49,7 @@ export function initializeMap(mapId, households, stores) {
     // Helper function to parse WKT point format
     const parsePoint = (pointString) => {
         // More robustly finds coordinates within "POINT (...)"
-        const coordsStr = pointString.match(/\((.*)\)/);
+        const coordsStr = pointString.match(/\(([^)]*)\)/);
         if (!coordsStr || !coordsStr[1]) return []; // Return empty array if no match
         return coordsStr[1].trim().split(/\s+/).map(Number);
     };
