@@ -152,7 +152,7 @@ const App = () => {
     // add search params
     //
     const params = new URLSearchParams();
-    params.append('simulation_instance', simulationInstanceId);
+    params.append('simulation_instance_id', simulationInstanceId);
     params.append('simulation_step', getSimulationStep());
 
     window.stores_request = client.get('/stores?' + params.toString())
@@ -178,7 +178,7 @@ const App = () => {
     // add search params
     //
     const params = new URLSearchParams();
-    params.append('simulation_instance', simulationInstanceId);
+    params.append('simulation_instance_id', simulationInstanceId);
     params.append('simulation_step', getSimulationStep());
 
     showLoadingSpinner();
@@ -205,7 +205,7 @@ const App = () => {
     // add search params
     //
     const params = new URLSearchParams();
-    params.append('simulation_instance', simulationInstanceId);
+    params.append('simulation_instance_id', simulationInstanceId);
 
     return client.get('/get-step-number?' + params.toString())
       .then(response => {

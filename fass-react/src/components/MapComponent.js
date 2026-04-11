@@ -206,9 +206,9 @@ export function initializeMap(mapId, households, stores) {
     
     function renderStore(store, layer) {
         let position;
-        if (store.x !== undefined && store.y !== undefined) {
-        // New format: x/y are 4326 coordinates
-            position = [store.y, store.x]; // Leaflet expects [lat, lng]
+        if (store.latitude !== undefined && store.longitude !== undefined) {
+        // New format: lat/long are 4326 coordinates
+            position = [store.latitude, store.longitude]; // Leaflet expects [lat, lng]
         } else {
         // Old format: geometry is a WKT point in 3857 coordinates
             const array = parsePolygon(store.geometry);
