@@ -341,6 +341,11 @@ const App = () => {
   const updateStepNumber = (newStepNumber) => {
       window.stepNumber = newStepNumber;
       setStepNumber(newStepNumber);
+      // Reload stores for the new step so manual changes (add/delete) don't persist incorrectly
+      const simulationInstanceId = getSimulationInstanceId();
+      if (simulationInstanceId) {
+        loadStores(simulationInstanceId);
+      }
   };
 
   const updateCurrentSimulation = () => {
