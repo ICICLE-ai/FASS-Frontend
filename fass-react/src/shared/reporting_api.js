@@ -1,12 +1,13 @@
 import { client } from './client.js';
 
 export const STAT_KEYS = {
-  MEAN_FOOD_SCORE:                         'mean_food_score',
-  STDDEV_FOOD_SCORE:                       'stddev_food_score',
-  PCT_LOW_FOOD_ACCESS:                     'pct_low_food_access',
-  MEAN_DISTANCE_TO_NEAREST_SUPERMARKET:    'mean_distance_to_nearest_supermarket',
-  STDDEV_DISTANCE_TO_NEAREST_SUPERMARKET:  'stddev_distance_to_nearest_supermarket',
-  MEAN_TRAVEL_TIME_TO_NEAREST_SUPERMARKET: 'mean_travel_time_to_nearest_supermarket',
+  MEAN_FOOD_SCORE:                           'mean_food_score',
+  STDDEV_FOOD_SCORE:                         'stddev_food_score',
+  PCT_LOW_FOOD_ACCESS:                       'pct_low_food_access',
+  MEAN_DISTANCE_TO_NEAREST_SUPERMARKET:      'mean_distance_to_nearest_supermarket',
+  STDDEV_DISTANCE_TO_NEAREST_SUPERMARKET:    'stddev_distance_to_nearest_supermarket',
+  MEAN_TRAVEL_TIME_TO_NEAREST_SUPERMARKET:   'mean_travel_time_to_nearest_supermarket',
+  STDDEV_TRAVEL_TIME_TO_NEAREST_SUPERMARKET: 'stddev_travel_time_to_nearest_supermarket',
 };
 
 /**
