@@ -4,6 +4,16 @@ import { HouseholdContext } from '../App';
 import { client } from "../shared/client.js";
 import { hasSimulations, hasSimulationInstance, getSimulationInstanceId, getSimulationStep } from '../App';
 
+function parsePlaceName(placeName) {
+    if (!placeName) return { county: '—', state: '—' };
+    const parts = placeName.split(',').map(s => s.trim());
+    return {
+        county: parts[0] ?? '—',
+        state:  parts[1] ?? '—',
+    };
+}
+
+
 const DataComponent = () => {
     const {stepNumber, stores} = useContext(StoreContext)
     const {households} = useContext(HouseholdContext)
@@ -12,6 +22,39 @@ const DataComponent = () => {
     const [numNonSPM, setNumNonSPM] = useState(0)
     const [avgIncome, setAvgIncome] = useState(0)
     const [avgVehicles, setAvgVehicles] = useState(0)
+    const [county, setCounty] = useState('—'); 
+    const [state, setState] = useState('—'); 
+    const [currentInstanceId, setCurrentInstanceId] = useState(null);
+
+    useEffect(() => {
+        const instanceId = getSimulationInstanceId();
+ 
+        // Only re-fetch if the instance has actually changed
+        if (!instanceId || instanceId === currentInstanceId) return;
+        setCurrentInstanceId(instanceId);
+ 
+        const fetchLocationInfo = async () => {
+            try {
+                const response = await client.get(`/simulation-instances/${instanceId}`);
+                const description = response.data?.simulation_instance?.description;
+                if (description) {
+                    try {
+                        const parsed = JSON.parse(description);
+                        const { county: c, state: s } = parsePlaceName(parsed.place_name);
+                        setCounty(c);
+                        setState(s);
+                    } catch {
+                        setCounty('—');
+                        setState('—');
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching simulation instance info:', error);
+            }
+        };
+ 
+        fetchLocationInfo();
+    }, [stepNumber, stores, currentInstanceId]);
 
     useEffect(() => {
         const getNumStores = async () => {
@@ -116,8 +159,8 @@ const DataComponent = () => {
     <div>
         <b>Step: {stepNumber}</b>
         <p></p>
-        <p>State: Wisconsin</p>
-        <p>County: Brown</p>
+        <p>State: {state}</p>
+        <p>County: {county}</p>
         <p>Household Count: {numHouseholds}</p>
         <p>Number of Supermarkets: {numSPM}</p>
         <p>Number of Convenience: {numNonSPM}</p>

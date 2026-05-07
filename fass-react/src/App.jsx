@@ -365,6 +365,21 @@ const App = () => {
       mapRef.clearAll();
       window.stepNumber = undefined;
 
+      client.get(`/simulation-instances/${simulationInstanceId}`)
+        .then(response => {
+          const description = response.data?.simulation_instance?.description;
+          if (description) {
+            try {
+              const parsed = JSON.parse(description);
+              if (parsed.center_lat && parsed.center_lon) {
+                mapRef.recenterMap(parsed.center_lat, parsed.center_lon);
+              }
+            } catch (e) {
+              console.warn('Could not parse description:', e);
+            }
+          }
+        });
+
       // load new simulation data
       //
       loadStepNumber(simulationInstanceId, {
@@ -425,10 +440,11 @@ const App = () => {
 
   useEffect(() => {
     if (!mapRef.current) {
-      const { map, clear, clearAll, renderAll } = initializeMap('map', households, stores);
+      const { map, clear, clearAll, renderAll, recenterMap } = initializeMap('map', households, stores);
       mapRef.current = map;
       mapRef.clear = clear;
       mapRef.clearAll = clearAll;
+      mapRef.recenterMap = recenterMap;
       renderHouseholdsRef.current = renderAll;
 
       

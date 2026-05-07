@@ -95,6 +95,11 @@ export function initializeMap(mapId, households, stores) {
         householdLayer = L.layerGroup().addTo(map);
     }
 
+    function recenterMap(lat, lon, zoom = 11) {
+        map.setView([lat, lon], zoom);
+    }
+    window.recenterMap = recenterMap;
+
     //
     // icon rendering functions
     //
@@ -522,5 +527,5 @@ export function initializeMap(mapId, households, stores) {
     // renderAll(households, stores);
 
     // Return the map and the render_households function so it can be called externally if needed
-    return { map, clearAll, renderAll };
+    return { map, clearAll, renderAll, recenterMap };
 }
