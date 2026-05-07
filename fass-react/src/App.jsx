@@ -492,6 +492,7 @@ const App = () => {
                       />
                       <RemoveStoreButton />
                       <StepButton updateStepNumber={updateStepNumber} />
+                      <ReportButton />   
                     </div>
                 </div>
 

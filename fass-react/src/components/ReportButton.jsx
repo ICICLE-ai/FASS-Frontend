@@ -1,12 +1,22 @@
-import React, { useEffect, useState, useContext } from 'react';
-import {Button} from 'react-bootstrap';
-
-const ResetButton = () => { 
-    return (
-        <>
-        <Button>Generate Report</Button>
-        </>
-    )
-}
-
-export default ResetButton;
+import React, { useState } from 'react';
+import { Button } from 'react-bootstrap';
+import ReportModal from './ReportModal';
+ 
+const ReportButton = () => {
+  const [showModal, setShowModal] = useState(false);
+ 
+  return (
+    <>
+      <Button onClick={() => setShowModal(true)}>
+        Generate Report
+      </Button>
+      <ReportModal
+        show={showModal}
+        handleClose={() => setShowModal(false)}
+      />
+    </>
+  );
+};
+ 
+export default ReportButton;
+ 
