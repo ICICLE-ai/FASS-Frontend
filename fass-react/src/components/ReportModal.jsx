@@ -116,7 +116,7 @@ const ReportModal = ({ show, handleClose }) => {
         .report-modal .modal-title {
           font-weight: 700;
           font-size: 1.1rem;
-          color: #1e3a5f;
+          color: #000000;
           letter-spacing: 0.02em;
         }
         .report-modal .modal-footer {
@@ -129,7 +129,7 @@ const ReportModal = ({ show, handleClose }) => {
         }
         .report-subtitle {
           font-size: 0.72rem;
-          color: #3b82f6;
+          color: #000000;
           letter-spacing: 0.06em;
           margin-top: 2px;
           font-weight: 500;
@@ -139,7 +139,7 @@ const ReportModal = ({ show, handleClose }) => {
           font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.1em;
-          color: #3b82f6;
+          color: #000000;
           margin: 12px 0 6px 2px;
         }
         .report-stat-grid {
