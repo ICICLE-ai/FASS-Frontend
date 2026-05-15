@@ -19,22 +19,9 @@ export function initializeMap(mapId, households, stores) {
         maxZoom: 19,
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
-
-    // Define the source and destination projections
-    const EPSG3857 = 'EPSG:3857';
-    const EPSG4326 = 'EPSG:4326';
-
-    // Configure proj4 with the EPSG:3857 and EPSG:4326 projections
-    proj4.defs(EPSG3857, "+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=27445 +datum=WGS84 +units=m +no_defs");
-    proj4.defs(EPSG4326, "+proj=longlat +datum=WGS84 +no_defs");
-
-    const projectToEPSG4326 = (coordinates) => {
-        return coordinates.map(coord => {
-            // Convert each coordinate from EPSG:3857 to EPSG:4326
-            const [x, y] = coord;
-            return proj4(EPSG3857, EPSG4326, [x, y]).reverse();
-        });
-    };
+    
+    const projectToEPSG4326 = (coordinates) =>
+        coordinates.map(coord => proj4("EPSG:3857", "EPSG:4326", coord).reverse());
 
     // Helper function to parse WKT format
     const parsePolygon = (polygonString) => {
@@ -212,10 +199,8 @@ export function initializeMap(mapId, households, stores) {
     function renderStore(store, layer) {
         let position;
         if (store.latitude !== undefined && store.longitude !== undefined) {
-        // New format: lat/long are 4326 coordinates
-            position = [store.latitude, store.longitude]; // Leaflet expects [lat, lng]
+            position = [store.latitude, store.longitude];
         } else {
-        // Old format: geometry is a WKT point in 3857 coordinates
             const array = parsePolygon(store.geometry);
             const centroid = array.reduce(
                 (acc, coord) => [acc[0] + coord[0] / array.length, acc[1] + coord[1] / array.length],
