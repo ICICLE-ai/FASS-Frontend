@@ -13,7 +13,7 @@ export function initializeMap(mapId, households, stores) {
         dragging: true,
         touchZoom: true,
         tap: true
-    }).setView([39.938806, -82.972361], 13);
+    }).setView([44.519356, -88.019826], 11); // Brown County, Wisconsin (Green Bay area)
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -81,6 +81,11 @@ export function initializeMap(mapId, households, stores) {
         householdLayer = null;
         householdLayer = L.layerGroup().addTo(map);
     }
+
+    function recenterMap(lat, lon, zoom = 11) {
+        map.setView([lat, lon], zoom);
+    }
+    window.recenterMap = recenterMap;
 
     //
     // icon rendering functions
@@ -192,12 +197,17 @@ export function initializeMap(mapId, households, stores) {
     }
     
     function renderStore(store, layer) {
-        const array = parsePolygon(store.geometry);
-        const centroid = array.reduce(
-            (acc, coord) => [acc[0] + coord[0] / array.length, acc[1] + coord[1] / array.length],
-            [0, 0]
-        );
-        const position = proj4("EPSG:3857", "EPSG:4326", centroid).reverse();
+        let position;
+        if (store.latitude !== undefined && store.longitude !== undefined) {
+            position = [store.latitude, store.longitude];
+        } else {
+            const array = parsePolygon(store.geometry);
+            const centroid = array.reduce(
+                (acc, coord) => [acc[0] + coord[0] / array.length, acc[1] + coord[1] / array.length],
+                [0, 0]
+            );
+            position = proj4("EPSG:3857", "EPSG:4326", centroid).reverse();
+        }
         const icon = getStoreIcon(store.shop);
 
         // add marker to layer
@@ -360,7 +370,7 @@ export function initializeMap(mapId, households, stores) {
             "Number of Workers",
             "Stores within 1 Mile",
             "Closest Store (Miles)",
-            "Transit time",
+            // "Transit time", --> removed until implemented
             "Food Access Score"
         ];
 
@@ -378,7 +388,8 @@ export function initializeMap(mapId, households, stores) {
     }
 
     function renderHousehold(household, layer) {
-        const position = projectToEPSG4326([parsePoint(household["Geometry"])]);
+        const [lon, lat] = parsePoint(household["Geometry"]);
+        const position = [[lat, lon]];
         const icon = getHouseholdIcon(household);
 
         // add marker to layer
@@ -501,5 +512,5 @@ export function initializeMap(mapId, households, stores) {
     // renderAll(households, stores);
 
     // Return the map and the render_households function so it can be called externally if needed
-    return { map, clearAll, renderAll };
+    return { map, clearAll, renderAll, recenterMap };
 }
