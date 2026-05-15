@@ -63,6 +63,8 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.get_tag_name.outputs.tag_name }}
           context: ./fass-react
           file: ./fass-react/Dockerfile
+          build-args: |
+            VITE_MODE=${{ github.ref == 'refs/heads/staging' && 'staging' || 'production' }}
   
   deploy-images-staging:
     runs-on: ubuntu-latest

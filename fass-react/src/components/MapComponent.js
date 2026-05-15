@@ -13,28 +13,15 @@ export function initializeMap(mapId, households, stores) {
         dragging: true,
         touchZoom: true,
         tap: true
-    }).setView([39.938806, -82.972361], 13);
+    }).setView([44.519356, -88.019826], 11); // Brown County, Wisconsin (Green Bay area)
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
-
-    // Define the source and destination projections
-    const EPSG3857 = 'EPSG:3857';
-    const EPSG4326 = 'EPSG:4326';
-
-    // Configure proj4 with the EPSG:3857 and EPSG:4326 projections
-    proj4.defs(EPSG3857, "+proj=merc +lon_0=0 +k=1 +x_0=0 +y_0=27445 +datum=WGS84 +units=m +no_defs");
-    proj4.defs(EPSG4326, "+proj=longlat +datum=WGS84 +no_defs");
-
-    const projectToEPSG4326 = (coordinates) => {
-        return coordinates.map(coord => {
-            // Convert each coordinate from EPSG:3857 to EPSG:4326
-            const [x, y] = coord;
-            return proj4(EPSG3857, EPSG4326, [x, y]).reverse();
-        });
-    };
+    
+    const projectToEPSG4326 = (coordinates) =>
+        coordinates.map(coord => proj4("EPSG:3857", "EPSG:4326", coord).reverse());
 
     // Helper function to parse WKT format
     const parsePolygon = (polygonString) => {
@@ -78,7 +65,6 @@ export function initializeMap(mapId, households, stores) {
         red_house: getMapIcon('house-red.svg', 'shadow.svg')
     };
 
-    //
     // rendering functions
     //
 
@@ -95,6 +81,11 @@ export function initializeMap(mapId, households, stores) {
         householdLayer = null;
         householdLayer = L.layerGroup().addTo(map);
     }
+
+    function recenterMap(lat, lon, zoom = 11) {
+        map.setView([lat, lon], zoom);
+    }
+    window.recenterMap = recenterMap;
 
     //
     // icon rendering functions
@@ -151,56 +142,177 @@ export function initializeMap(mapId, households, stores) {
         //
         const tr3 = document.createElement("tr");
         const td3 = document.createElement("td");
-        const button = document.createElement("button");
-        button.textContent = "Remove Store";
-        button.style.padding = "8px 8px";
-        button.style.color = "white";
-        button.style.cursor = "pointer";
-        button.style.backgroundColor = "#0d6efd";
-        button.style.marginTop = "10px";
-        button.style.marginBottom = "10px";
-        button.style.borderRadius = "6px";
+        // const button = document.createElement("button");
+        // button.textContent = "Remove Store";
+        // button.style.padding = "8px 8px";
+        // button.style.color = "white";
+        // button.style.cursor = "pointer";
+        // button.style.backgroundColor = "#0d6efd";
+        // button.style.marginTop = "10px";
+        // button.style.marginBottom = "10px";
+        // button.style.borderRadius = "6px";
 
-        button.addEventListener("click", () => {
-            try {
-                client.delete('/stores', {
-                    params: {
-                    store_id: store.store_id, 
-                    simulation_instance_id: getSimulationInstanceId(),
-                    simulation_step: getSimulationStep(),
-                    }
-                })
-                .then(response => {
-                    console.log('Store removed:', store.name);
+        // button.addEventListener("click", () => {
+        //     try {
+        //         client.delete('/stores', {
+        //             params: {
+        //             store_id: store.store_id, 
+        //             simulation_instance_id: getSimulationInstanceId(),
+        //             simulation_step: getSimulationStep(),
+        //             }
+        //         })
+        //         .then(response => {
+        //             console.log('Store removed:', store.name);
 
-                    // update map
-                    //
-                    window.stores = response.data.store_json;
-                    rerender();
-                })
-            } 
-            catch(error) {
-                console.error('Error removing store:', error);
-            };
-        });
-        td3.appendChild(button);
+        //             // Make sure to untrack the store removed via popup (don't include as a highlighted marker)
+        //             const highlightedStores = window.storeMarkers.filter(marker => marker.isHighlighted);
+        //             highlightedStores.forEach(marker => {
+        //                 const storeID = marker.storeId;
+        //                 if(storeID === store.store_id) {
+        //                     // Remove the marker from the map
+        //                     map.removeLayer(marker);
+
+        //                     // Remove marker from storeMarkers array
+        //                     const index = window.storeMarkers.indexOf(marker);
+        //                     if (index > -1) window.storeMarkers.splice(index, 1);
+        //                }
+        //             });
+
+        //             // update map
+        //             //
+        //             window.stores = response.data.store_json;
+        //             //rerender();
+        //         })
+        //     } 
+        //     catch(error) {
+        //         console.error('Error removing store:', error);
+        //     };
+        // });
+        //td3.appendChild(button);
         tr3.appendChild(td3);
         tbody.appendChild(tr3);
 
         table.appendChild(tbody);
         return table;
     }
-
+    
     function renderStore(store, layer) {
-        const array = parsePolygon(store.geometry);
-        const point = array[0];
-        const position = proj4(EPSG3857, EPSG4326, point).reverse();
+        let position;
+        if (store.latitude !== undefined && store.longitude !== undefined) {
+            position = [store.latitude, store.longitude];
+        } else {
+            const array = parsePolygon(store.geometry);
+            const centroid = array.reduce(
+                (acc, coord) => [acc[0] + coord[0] / array.length, acc[1] + coord[1] / array.length],
+                [0, 0]
+            );
+            position = proj4("EPSG:3857", "EPSG:4326", centroid).reverse();
+        }
         const icon = getStoreIcon(store.shop);
 
         // add marker to layer
         //
-        L.marker(position, {icon: icon}).addTo(layer).bindPopup(getStorePopup(store));
+        const marker = L.marker(position, {icon: icon}).addTo(layer).bindPopup(getStorePopup(store));
+        // Keep trach of each store's highlight state and ID for future reference
+        marker.isHighlighted = false;
+        marker.storeId = store.store_id;
+
+        // Unhighlight all markers when clicking on the map (not on a marker)
+        map.on('click', (e) => {
+            window.storeMarkers?.forEach(marker => {
+                if (marker.isHighlighted) {
+                    marker.isHighlighted = false;
+                    if (marker.getElement()) {
+                        marker.getElement().style.border = 'none';
+                    }
+                }
+            });
+        });
+
+        // When clicked, toggle highlight state and update marker highlighting on map
+        marker.on('click', (e) => {
+            const isCtrl = e.originalEvent.ctrlKey || e.originalEvent.metaKey; // Ctrl on Windows/Linux, Cmd on Mac
+            
+            // When no ctrl toggle
+            if (!isCtrl) {
+                // Unhighlight all other markers
+                window.storeMarkers.forEach(m => {
+                    if (m !== marker) {
+                        m.isHighlighted = false;
+                        if (m.getElement()) {
+                            m.getElement().style.border = 'none';
+                        }
+                    }
+                });
+            }
+            
+            // When ctrl toggle 
+            marker.isHighlighted = !marker.isHighlighted;
+            if(marker.getElement()) {
+                marker.getElement().style.border = marker.isHighlighted ? '2px solid white' : 'none';
+            }
+        });
+
+        // Store the markers in window
+        window.storeMarkers = window.storeMarkers || [];
+        window.storeMarkers.push(marker);
     }
+
+    function deleteHighlightedStores() {
+        // Get only the highlighted store markers
+        const highlightedStores = window.storeMarkers.filter(marker => marker.isHighlighted);
+
+        // Run backend delete for each highlighted store
+        highlightedStores.forEach(marker => {
+            const storeID = marker.storeId;
+            client.delete('/stores', {
+                params: {
+                    store_id: storeID,
+                    simulation_instance_id: getSimulationInstanceId(),
+                    simulation_step: getSimulationStep(),
+                }
+            })
+            .then(response => {
+                console.log('Stores removed:', highlightedStores.length);
+                
+                // Remove the marker from the map
+                map.removeLayer(marker);
+
+                // Remove marker from storeMarkers array
+                const index = window.storeMarkers.indexOf(marker);
+                if (index > -1) window.storeMarkers.splice(index, 1);
+
+                // Update frontend store list
+                window.stores = response.data.store_json;
+
+                // update map
+                rerender();
+            })
+            .catch(error => {
+                console.error('Error removing store:', error);
+            });
+        });
+    }
+
+    function handleRemoveStores(confirmed) {
+        if (!window.storeMarkers) {
+            console.warn('No store markers found.');
+            return false;
+        }
+
+        // Get only the highlighted store markers
+        const highlighted = window.storeMarkers.filter(m => m.isHighlighted);
+        if (highlighted.length === 0) return false;
+
+        // Call the existing delete logic
+        if(confirmed) {
+            deleteHighlightedStores();
+        }
+        return true;
+    }
+
+    // Allow React to call this function in the RemoveStoreButton component
+    window.handleRemoveStores = handleRemoveStores;
 
     function renderStores(stores, layer, households, limit=0) {
         stores.forEach((store, index) => {
@@ -258,7 +370,7 @@ export function initializeMap(mapId, households, stores) {
             "Number of Workers",
             "Stores within 1 Mile",
             "Closest Store (Miles)",
-            "Transit time",
+            // "Transit time", --> removed until implemented
             "Food Access Score"
         ];
 
@@ -276,7 +388,8 @@ export function initializeMap(mapId, households, stores) {
     }
 
     function renderHousehold(household, layer) {
-        const position = projectToEPSG4326([parsePoint(household["Geometry"])]);
+        const [lon, lat] = parsePoint(household["Geometry"]);
+        const position = [[lat, lon]];
         const icon = getHouseholdIcon(household);
 
         // add marker to layer
@@ -399,5 +512,5 @@ export function initializeMap(mapId, households, stores) {
     // renderAll(households, stores);
 
     // Return the map and the render_households function so it can be called externally if needed
-    return { map, clearAll, renderAll };
+    return { map, clearAll, renderAll, recenterMap };
 }
