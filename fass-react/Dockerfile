@@ -11,8 +11,9 @@ RUN npm install
 # Copy the rest of the application files
 COPY . .
 
-# Build the Vite application
-RUN npm run build
+# Build the Vite application (mode controls which .env file is used)
+ARG VITE_MODE=production
+RUN npm run build -- --mode ${VITE_MODE}
 
 # Debug: Print the build directory to verify its content
 RUN ls -al /app/dist
