@@ -1,7 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const STAGING_URL = 'https://fassfrontstage.pods.icicleai.tapis.io/';
-const PROD_URL = 'https://feast.pods.icicleai.tapis.io/';
 
 const Landing = () => {
   return (
@@ -12,12 +12,12 @@ const Landing = () => {
           Food Access Simulation System
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <a
-            href={PROD_URL}
+          <Link
+            to="/simulation"
             className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
           >
             Franklin County
-          </a>
+          </Link>
           <a
             href={STAGING_URL}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
