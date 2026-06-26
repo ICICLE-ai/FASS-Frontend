@@ -489,11 +489,11 @@ const App = () => {
       <HouseholdContext.Provider value={{ households, setHouseholds }}>
         {/* Top Bar */}
         <TopBar />
-        <div className="min-h-screen flex items-center justify-center">
+        <div className="min-h-screen flex items-center justify-center" style={{ paddingTop: 80 }}>
             <div className="container mx-auto py-8 px-4 bg-white shadow-md rounded-lg">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 {/* Left Column */}
-                <div className="bg-blue-200 p-6 rounded-lg shadow-md h-[400px] md:min-h-[80vh]">
+                <div className="p-6 rounded-lg shadow-md h-[400px] md:min-h-[80vh]" style={{ backgroundColor: 'var(--icicle-soft)' }}>
                     
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">Simulation</h3>
                     <div className="space-y-4 flex flex-col items-center">
@@ -527,7 +527,7 @@ const App = () => {
                 </div>
 
                 {/* Data Column */}
-                <div className="bg-blue-200 p-6 rounded-lg shadow-md h-[400px] md:min-h-[80vh]">
+                <div className="p-6 rounded-lg shadow-md h-[400px] md:min-h-[80vh]" style={{ backgroundColor: 'var(--icicle-soft)' }}>
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">Data</h3>
                     <DataComponent />
                 </div>
@@ -537,8 +537,8 @@ const App = () => {
             <h1>Copyright</h1>
         
         {/* Add Store Modal */}
-        <AddStoreModal 
-          show={showAddStoreModal} 
+        <AddStoreModal
+          show={showAddStoreModal}
           handleClose={handleCloseAddStoreModal}
           initialCoordinates={modalCoordinates}
         />

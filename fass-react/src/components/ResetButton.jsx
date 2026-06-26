@@ -3,6 +3,7 @@ import {Button} from 'react-bootstrap';
 import { StoreContext } from '../App';
 import { client } from "../shared/client.js";
 import { getSimulationInstanceId, getSimulationStep, updateSimulations } from '../App';
+import InfoTooltip from './InfoTooltip';
 
 const headers = {
     'Content-Type': 'application/json',
@@ -25,7 +26,9 @@ const ResetButton = () => {
 
     return (
         <>
-        <Button onClick={reset}>Reset Simulation</Button>
+        <InfoTooltip text="Reset the simulation to month 0 and undo all store changes you've made.">
+            <Button onClick={reset}>Reset Simulation</Button>
+        </InfoTooltip>
         </>
     )
 }
