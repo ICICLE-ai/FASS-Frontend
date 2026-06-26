@@ -41,6 +41,14 @@ const TopBar = () => {
         <Button
           variant="light"
           size="sm"
+          onClick={() => { window.location.href = 'https://feast.pods.icicleai.tapis.io/'; }}
+          style={{ marginRight: 8 }}
+        >
+          ← Landing
+        </Button>
+        <Button
+          variant="light"
+          size="sm"
           onClick={() => window.open('https://foodaccesssimulator.org/', '_blank', 'noopener,noreferrer')}
           style={{ marginRight: 8 }}
         >
