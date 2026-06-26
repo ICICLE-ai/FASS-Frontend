@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Toast, ToastContainer } from 'react-bootstrap';
+import InfoTooltip from './InfoTooltip';
 
 const AddStoreButton = ({ enterAddStoreMode, isAddStoreMode }) => {
     const [showToast, setShowToast] = useState(false);
@@ -31,9 +32,11 @@ const AddStoreButton = ({ enterAddStoreMode, isAddStoreMode }) => {
 
     return (
         <>
-            <Button variant="primary" onClick={handleClick}>
-                Add Store
-            </Button>
+            <InfoTooltip text="Add a new store: click here, then click on the map where you want the store to be placed.">
+                <Button variant="primary" onClick={handleClick}>
+                    Add Store
+                </Button>
+            </InfoTooltip>
             
             <ToastContainer position="top-center" className="p-3">
                 <Toast 

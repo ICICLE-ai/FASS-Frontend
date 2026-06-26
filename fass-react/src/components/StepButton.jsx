@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Button, Spinner } from 'react-bootstrap';
 import { client} from "../shared/client.js";
 import { getSimulationInstanceId, getSimulationStep } from '../App';
+import InfoTooltip from './InfoTooltip';
 
-// const API_URL = import.meta.env.VITE_API_URL || "__API__URL__";
 const headers = {
     'Content-Type': 'application/json',
   };
@@ -30,19 +30,18 @@ const StepButton = ({updateStepNumber}) => {
     }
 
     return (
-      <>
-       <Button variant="primary" onClick={step} disabled={loading}>
-       {loading ? (
-        <>
-          <Spinner animation="border" size="sm" /> Loading...
-        </>
-      ) : (
-        "Run Step"
-      )}
+      <InfoTooltip text="Advance the simulation forward by one month and update household food access.">
+        <Button variant="primary" onClick={step} disabled={loading}>
+          {loading ? (
+            <>
+              <Spinner animation="border" size="sm" /> Loading...
+            </>
+          ) : (
+            "Advance Month"
+          )}
         </Button>
-      </>
+      </InfoTooltip>
     );
   };
-  
+
   export default StepButton;
-  

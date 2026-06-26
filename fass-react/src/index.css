@@ -2,6 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * ICICLE color scheme.
+ *   --icicle-primary: deep navy from the ICICLE logo background
+ *   --icicle-accent:  white — matches the logo glyphs and wordmark
+ *   --icicle-soft:    pale blue-grey for sidebars and data panels
+ *   --icicle-page:    very light page background
+ */
+:root {
+	--icicle-primary: #0B1F4E;
+	--icicle-accent:  #FFFFFF;
+	--icicle-soft:    #E8EEF7;
+	--icicle-page:    #F4F6FB;
+}
+
+body {
+	background-color: var(--icicle-page);
+}
+
+h1, h2, h3 {
+	color: var(--icicle-primary);
+}
+
+/* Brand primary buttons to the ICICLE navy */
+.btn-primary {
+	background-color: var(--icicle-primary);
+	border-color: var(--icicle-primary);
+}
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+	background-color: #061638;
+	border-color: #061638;
+}
+
 .overlay {
 	position: fixed;
 	display: flex;
@@ -49,7 +83,7 @@ h2 {
 }
 
 h1, h2, h3 {
-	color: #0d6efd;
+	color: var(--icicle-primary);
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
