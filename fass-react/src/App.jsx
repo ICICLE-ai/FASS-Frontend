@@ -125,6 +125,14 @@ const App = () => {
   function setSimulationInstances(simulationInstances) {
     clearSimulationInstances();
     addSimulationInstances(simulationInstances);
+
+    // Default to "Default Simulation" if present
+    const defaultSim = simulationInstances.find(
+      s => s.name?.toLowerCase().replace(/\s+/g, '_') === 'default_simulation'
+    );
+    if (defaultSim) {
+      document.getElementById('simulation-instances').value = defaultSim.id;
+    }
   }
 
   //
