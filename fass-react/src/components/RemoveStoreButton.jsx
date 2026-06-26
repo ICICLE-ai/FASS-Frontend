@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
 import RemoveStoreModal from './RemoveStoreModal';
 import RemoveMultipleStoreModal from "./RemoveMultipleStoreModal";
+import InfoTooltip from './InfoTooltip';
 
 const RemoveStoreButton = ({ onConfirm }) => {
     const [showModal, setShowModal] = useState(false);
@@ -39,9 +40,11 @@ const RemoveStoreButton = ({ onConfirm }) => {
 
     return (
         <>
-            <Button variant="primary" onClick={handleClick}>
-                Remove Store
-            </Button>
+            <InfoTooltip text="Remove a store: select one or more stores on the map, then click here to remove them.">
+                <Button variant="primary" onClick={handleClick}>
+                    Remove Store
+                </Button>
+            </InfoTooltip>
 
             {/* Modal for "no stores selected" */}
             <RemoveStoreModal show={showModal} handleClose={handleClose} />
