@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="markercluster/MarkerCluster.Default.css" />
     <style>
       /* Critical theme styles inlined to avoid FOUC before index.css loads */
-      body.custom-theme { background-color: #000928; color: #FFFFFF; }
+      :root { --icicle-page: #F4F6FB; --icicle-primary: #0B1F4E; }
+      body.custom-theme { background-color: var(--icicle-page); color: var(--icicle-primary); }
     </style>
   </head>
   <body class="custom-theme">
