@@ -24,18 +24,6 @@ h1, h2, h3 {
 	color: var(--icicle-primary);
 }
 
-/* Brand primary buttons to the ICICLE navy */
-.btn-primary {
-	background-color: var(--icicle-primary);
-	border-color: var(--icicle-primary);
-}
-.btn-primary:hover,
-.btn-primary:focus,
-.btn-primary:active {
-	background-color: #061638;
-	border-color: #061638;
-}
-
 /* Custom theme: dark navy background with white buttons and a #142551 accent */
 .custom-theme {
 	background-color: #000928;
@@ -57,6 +45,19 @@ h1, h2, h3 {
 	border-color: #142551;
 	color: #FFFFFF;
 }
+
+/* Brand primary buttons to the ICICLE navy */
+.btn-primary {
+	background-color: var(--icicle-primary);
+	border-color: var(--icicle-primary);
+}
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+	background-color: #061638;
+	border-color: #061638;
+}
+
 
 .overlay {
 	position: fixed;
