@@ -18,12 +18,21 @@ const Landing = () => {
           >
             Franklin County
           </Link>
-          <a
-            href={STAGING_URL}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
-          >
-            Brown County
-          </a>
+          {import.meta.env.DEV ? (
+            <Link
+              to="/simulation"
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
+            >
+              Brown County
+            </Link>
+          ) : (
+            <a
+              href={STAGING_URL}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
+            >
+              Brown County
+            </a>
+          )}
         </div>
       </div>
     </div>
