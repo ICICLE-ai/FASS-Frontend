@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Navbar, Button } from 'react-bootstrap';
 import HelpModal from './HelpModal';
 import WelcomeModal from './WelcomeModal';
+import SignInButton from './SignInButton';
 
 const TopBar = () => {
   const [showHelp, setShowHelp] = useState(false);
@@ -57,9 +58,10 @@ const TopBar = () => {
         <Button variant="light" size="sm" onClick={handleOpenAbout} style={{ marginRight: 8 }}>
           About
         </Button>
-        <Button variant="light" size="sm" onClick={handleOpenHelp}>
+        <Button variant="light" size="sm" onClick={handleOpenHelp} style={{ marginRight: 8 }}>
           Help
         </Button>
+        <SignInButton />
       </div>
       <HelpModal show={showHelp} handleClose={handleCloseHelp} />
       <WelcomeModal show={showAbout} handleClose={handleCloseAbout} />
