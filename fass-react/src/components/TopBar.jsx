@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Navbar, Button } from 'react-bootstrap';
 import HelpModal from './HelpModal';
 import WelcomeModal from './WelcomeModal';
+import { useAuth } from '../shared/AuthContext.jsx';
 
 const TopBar = () => {
   const [showHelp, setShowHelp] = useState(false);
   const [showAbout, setShowAbout] = useState(
     () => sessionStorage.getItem('feast.welcomeSeen') !== 'true'
   );
+  const { isSignedIn, username } = useAuth();
 
   const handleCloseHelp = () => setShowHelp(false);
   const handleOpenHelp = () => setShowHelp(true);
@@ -57,9 +59,19 @@ const TopBar = () => {
         <Button variant="light" size="sm" onClick={handleOpenAbout} style={{ marginRight: 8 }}>
           About
         </Button>
-        <Button variant="light" size="sm" onClick={handleOpenHelp}>
+        <Button
+          variant="light"
+          size="sm"
+          onClick={handleOpenHelp}
+          style={isSignedIn ? { marginRight: 8 } : undefined}
+        >
           Help
         </Button>
+        {isSignedIn && (
+          <span style={{ color: 'white', fontSize: 14 }}>
+            {username || 'Signed in'}
+          </span>
+        )}
       </div>
       <HelpModal show={showHelp} handleClose={handleCloseHelp} />
       <WelcomeModal show={showAbout} handleClose={handleCloseAbout} />
