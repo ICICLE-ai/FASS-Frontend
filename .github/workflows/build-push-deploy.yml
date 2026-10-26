@@ -25,7 +25,9 @@ env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: icicle-ai/fass-front
-
+permissions:
+  contents: read
+  packages: write
 jobs:
   build-and-push-images:
     runs-on: ubuntu-latest
