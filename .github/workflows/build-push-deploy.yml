@@ -9,9 +9,11 @@
 # If branch = main, tag becomes `latest` so latest is built.
 #
 ### Variables
-#   secrets.TAPIS_TOKEN: ICICLE org-level Tapis token (see cicd-templates wiki Quick-start)
-#   vars.POD_ID: feast
-#   vars.STAGE_POD_ID: fassfrontstage
+#   secrets.REGISTRY_USERNAME: Docker username
+#   secrets.REGISTRY_PASSWORD: Docker token
+#   secrets.TAPIS_TOKEN: token for Tapis user
+#   vars.POD_ID: storeclosureabm
+#   vars.DEV_POD_ID: storeclosureabmdev
 
 name: Build & Push & Deploy
 on:
