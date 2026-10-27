@@ -420,6 +420,7 @@ const App = () => {
   //
   window.updateStepNumber = updateStepNumber;
   window.updateCurrentSimulation = updateCurrentSimulation;
+  window.updateSimulations = updateSimulations;
 
   //
   // react callbacks
