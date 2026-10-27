@@ -63,15 +63,38 @@ const TopBar = () => {
           variant="light"
           size="sm"
           onClick={handleOpenHelp}
-          style={isSignedIn ? { marginRight: 8 } : undefined}
+          style={{ marginRight: 8 }}
         >
           Help
         </Button>
-        {isSignedIn && (
-          <span style={{ color: 'white', fontSize: 14 }}>
-            {username || 'Signed in'}
-          </span>
-        )}
+        <span
+          title={
+            isSignedIn
+              ? 'Your scenarios are private to your Tapis account.'
+              : 'No Tapis session detected. You can view and edit public scenarios only.'
+          }
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '4px 10px',
+            borderRadius: 999,
+            fontSize: 13,
+            fontWeight: 500,
+            backgroundColor: isSignedIn ? '#1E7A3B' : '#B45309',
+            color: 'white',
+          }}
+        >
+          <span
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              backgroundColor: isSignedIn ? '#A5D6A7' : '#FDE68A',
+            }}
+          />
+          {isSignedIn ? `Signed in: ${username || 'user'}` : 'Public view'}
+        </span>
       </div>
       <HelpModal show={showHelp} handleClose={handleCloseHelp} />
       <WelcomeModal show={showAbout} handleClose={handleCloseAbout} />
