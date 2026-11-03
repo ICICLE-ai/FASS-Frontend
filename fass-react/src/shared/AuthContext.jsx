@@ -1,23 +1,27 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { clearAuthToken, getAuthToken, setAuthToken } from './client.js';
+import { clearAuthToken, setAuthToken } from './client.js';
 import { decodeTokenClaims, displayNameFromClaims, readTapisTokenCookie } from './tapisSession.js';
 
 const AuthContext = createContext(null);
 
-// Seed the auth token from the Tapis pods gateway cookie (X-Tapis-Token on
-// Domain=icicleai.tapis.io). Falls back to whatever client.js already loaded
-// out of localStorage so a reload doesn't flash through a logged-out state
-// if the gateway cookie expired this tab. The side effect in a useState
-// initializer runs exactly once, before any child component renders, so a
-// child's mount-time API call will see the token on client.js's module-level
-// authToken var.
-function initialToken() {
+// Seed the auth token from the Tapis session cookie (X-Tapis-Token on
+// Domain=icicleai.tapis.io). The cookie is the only source of truth: if it's
+// missing, the user isn't signed in to Tapis, so drop any token saved from an
+// earlier visit instead of reusing it. Reusing it meant that after signing
+// out of Tapis, FEAST kept acting as the previous user in that browser until
+// the token expired. The side effect in a useState initializer runs exactly
+// once, before any child component renders, so a child's mount-time API call
+// sees the right token on client.js's module-level authToken var.
+// Exported for AuthContext.test.js.
+// eslint-disable-next-line react-refresh/only-export-components
+export function initialToken() {
     const cookieToken = readTapisTokenCookie();
     if (cookieToken) {
         setAuthToken(cookieToken);
         return cookieToken;
     }
-    return getAuthToken();
+    clearAuthToken();
+    return null;
 }
 
 export function AuthProvider({ children }) {
