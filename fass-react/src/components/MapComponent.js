@@ -4,6 +4,7 @@ import proj4 from 'proj4';
 import 'proj4leaflet';
 import '../../markercluster/leaflet.markercluster-src.js'
 import {client} from "/src/shared/client.js";
+import {defaultMapCenter} from "/src/shared/mapCenter.js";
 import {getSimulationInstanceId, getSimulationStep} from "/src/App.jsx?t=1758562847100";
 
 export function initializeMap(mapId, households, stores) {
@@ -13,7 +14,7 @@ export function initializeMap(mapId, households, stores) {
         dragging: true,
         touchZoom: true,
         tap: true
-    }).setView([44.519356, -88.019826], 11); // Brown County, Wisconsin (Green Bay area)
+    }).setView(defaultMapCenter(), 11); // this deployment's county until a simulation loads
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
